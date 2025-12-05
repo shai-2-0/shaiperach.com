@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מודל שלושת הרבדים בניהול כיתה</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=David+Libre:wght@400;500;700&family=Heebo:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --primary-blue: #1a4a6e;
+            --secondary-blue: #2d6a8e;
+            --accent-gold: #c9a227;
+            --tier1-green: #2e7d32;
+            --tier2-orange: #ef6c00;
+            --tier3-red: #c62828;
+            --bg-cream: #faf8f5;
+            --text-dark: #2c2c2c;
+            --text-muted: #5a5a5a;
+            --border-light: #e0dcd4;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Heebo', 'David Libre', serif;
+            background: var(--bg-cream);
+            color: var(--text-dark);
+            line-height: 1.8;
+            font-size: 16px;
+        }
+        
+        .document {
+            max-width: 850px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 0 40px rgba(0,0,0,0.08);
+            min-height: 100vh;
+        }
+        
+        /* Header */
+        .doc-header {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+            color: white;
+            padding: 50px 60px;
+            position: relative;
+        }
+        
+        .doc-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--accent-gold);
+        }
+        
+        .institution {
+            font-size: 13px;
+            opacity: 0.9;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+        
+        .doc-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+        
+        .doc-subtitle {
+            font-size: 18px;
+            font-weight: 400;
+            opacity: 0.9;
+        }
+        
+        .doc-meta {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+            font-size: 14px;
+            opacity: 0.85;
+        }
+        
+        /* Content */
+        .content {
+            padding: 50px 60px;
+        }
+        
+        h2 {
+            color: var(--primary-blue);
+            font-size: 24px;
+            font-weight: 700;
+            margin: 45px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--accent-gold);
+        }
+        
+        h2:first-child {
+            margin-top: 0;
+        }
+        
+        h3 {
+            color: var(--secondary-blue);
+            font-size: 19px;
+            font-weight: 600;
+            margin: 30px 0 15px 0;
+        }
+        
+        h4 {
+            color: var(--text-dark);
+            font-size: 17px;
+            font-weight: 600;
+            margin: 25px 0 12px 0;
+        }
+        
+        p {
+            margin-bottom: 16px;
+            text-align: justify;
+        }
+        
+        /* Pyramid Visualization */
+        .pyramid-container {
+            margin: 40px auto;
+            max-width: 500px;
+        }
+        
+        .pyramid {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .pyramid-tier {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            text-align: center;
+            position: relative;
+            transition: transform 0.2s;
+        }
+        
+        .pyramid-tier:hover {
+            transform: scale(1.02);
+        }
+        
+        .tier-3 {
+            width: 180px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--tier3-red) 0%, #d32f2f 100%);
+            clip-path: polygon(15% 0%, 85% 0%, 100% 100%, 0% 100%);
+            font-size: 15px;
+        }
+        
+        .tier-2 {
+            width: 320px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--tier2-orange) 0%, #ff8f00 100%);
+            clip-path: polygon(8% 0%, 92% 0%, 100% 100%, 0% 100%);
+            margin-top: -5px;
+            font-size: 16px;
+        }
+        
+        .tier-1 {
+            width: 460px;
+            height: 90px;
+            background: linear-gradient(135deg, var(--tier1-green) 0%, #43a047 100%);
+            clip-path: polygon(5% 0%, 95% 0%, 100% 100%, 0% 100%);
+            margin-top: -5px;
+            font-size: 17px;
+        }
+        
+        .tier-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+        
+        .tier-percent {
+            font-size: 12px;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+        
+        .pyramid-caption {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+        
+        /* Lists */
+        ul, ol {
+            margin: 15px 0 20px 25px;
+        }
+        
+        li {
+            margin-bottom: 10px;
+        }
+        
+        /* Special Boxes */
+        .intro-box {
+            background: linear-gradient(135deg, #f5f7fa 0%, #eef2f7 100%);
+            border-right: 4px solid var(--primary-blue);
+            padding: 25px 30px;
+            margin: 25px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .key-point {
+            background: linear-gradient(135deg, #fff8e1 0%, #fff3cd 100%);
+            border-right: 4px solid var(--accent-gold);
+            padding: 20px 25px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .key-point strong {
+            color: #8b6914;
+        }
+        
+        .tip-box {
+            background: linear-gradient(135deg, #e8f5e9 0%, #dcedc8 100%);
+            border-right: 4px solid var(--tier1-green);
+            padding: 18px 22px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+            font-size: 15px;
+        }
+        
+        .tip-box::before {
+            content: '💡 טיפ מעשי: ';
+            font-weight: 600;
+            color: var(--tier1-green);
+        }
+        
+        .warning-box {
+            background: linear-gradient(135deg, #fce4ec 0%, #f8bbd9 100%);
+            border-right: 4px solid var(--tier3-red);
+            padding: 18px 22px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+            font-size: 15px;
+        }
+        
+        .note-for-students {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border-right: 4px solid #1976d2;
+            padding: 20px 25px;
+            margin: 25px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .note-for-students::before {
+            content: '📌 הערה לסטודנטים בהתנסות: ';
+            font-weight: 600;
+            color: #1565c0;
+        }
+        
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            font-size: 15px;
+        }
+        
+        th {
+            background: var(--primary-blue);
+            color: white;
+            padding: 14px 16px;
+            text-align: right;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border-light);
+            vertical-align: top;
+        }
+        
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        
+        tr:hover {
+            background: #f0f4f8;
+        }
+        
+        /* Tier Sections */
+        .tier-section {
+            margin: 40px 0;
+            padding: 30px;
+            border-radius: 12px;
+            position: relative;
+        }
+        
+        .tier-section h3 {
+            margin-top: 0;
+        }
+        
+        .tier-1-section {
+            background: linear-gradient(135deg, rgba(46, 125, 50, 0.08) 0%, rgba(67, 160, 71, 0.05) 100%);
+            border: 1px solid rgba(46, 125, 50, 0.2);
+        }
+        
+        .tier-1-section h3 {
+            color: var(--tier1-green);
+        }
+        
+        .tier-2-section {
+            background: linear-gradient(135deg, rgba(239, 108, 0, 0.08) 0%, rgba(255, 143, 0, 0.05) 100%);
+            border: 1px solid rgba(239, 108, 0, 0.2);
+        }
+        
+        .tier-2-section h3 {
+            color: var(--tier2-orange);
+        }
+        
+        .tier-3-section {
+            background: linear-gradient(135deg, rgba(198, 40, 40, 0.08) 0%, rgba(211, 47, 47, 0.05) 100%);
+            border: 1px solid rgba(198, 40, 40, 0.2);
+        }
+        
+        .tier-3-section h3 {
+            color: var(--tier3-red);
+        }
+        
+        /* Example Box */
+        .example-box {
+            background: white;
+            border: 1px solid var(--border-light);
+            border-radius: 10px;
+            padding: 25px;
+            margin: 25px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        
+        .example-box h4 {
+            margin-top: 0;
+            color: var(--primary-blue);
+            border-bottom: 1px dashed var(--border-light);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .example-level {
+            margin: 18px 0;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        
+        .example-level.prevention {
+            background: rgba(46, 125, 50, 0.1);
+            border-right: 3px solid var(--tier1-green);
+        }
+        
+        .example-level.intervention {
+            background: rgba(239, 108, 0, 0.1);
+            border-right: 3px solid var(--tier2-orange);
+        }
+        
+        .example-level.correction {
+            background: rgba(198, 40, 40, 0.1);
+            border-right: 3px solid var(--tier3-red);
+        }
+        
+        .example-level h5 {
+            margin: 0 0 10px 0;
+            font-size: 15px;
+        }
+        
+        .example-level ul {
+            margin: 0;
+        }
+        
+        /* Challenges Grid */
+        .challenges-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin: 25px 0;
+        }
+        
+        .challenge-card {
+            background: white;
+            border: 1px solid var(--border-light);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+        }
+        
+        .challenge-card h4 {
+            margin: 0 0 12px 0;
+            font-size: 16px;
+            color: var(--secondary-blue);
+        }
+        
+        .challenge-card p {
+            font-size: 14px;
+            margin-bottom: 10px;
+            color: var(--text-muted);
+        }
+        
+        .challenge-card .solution {
+            font-size: 14px;
+            color: var(--tier1-green);
+            font-weight: 500;
+        }
+        
+        /* Summary Box */
+        .summary-box {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+            color: white;
+            padding: 35px;
+            border-radius: 12px;
+            margin: 40px 0;
+        }
+        
+        .summary-box h3 {
+            color: white;
+            margin-top: 0;
+            border-bottom: 1px solid rgba(255,255,255,0.3);
+            padding-bottom: 15px;
+        }
+        
+        .summary-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .summary-number {
+            background: var(--accent-gold);
+            color: var(--primary-blue);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        
+        .summary-text strong {
+            color: var(--accent-gold);
+        }
+        
+        /* Sources */
+        .sources-section {
+            background: #f8f9fa;
+            padding: 30px;
+            margin: 40px -60px -50px -60px;
+            border-top: 1px solid var(--border-light);
+        }
+        
+        .sources-section h3 {
+            margin-top: 0;
+        }
+        
+        .source-item {
+            font-size: 14px;
+            margin: 12px 0;
+            padding-right: 20px;
+            text-indent: -20px;
+            color: var(--text-muted);
+        }
+        
+        .source-item a {
+            color: var(--secondary-blue);
+            text-decoration: none;
+        }
+        
+        .source-item a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Task Box */
+        .task-box {
+            background: white;
+            border: 2px solid var(--accent-gold);
+            border-radius: 12px;
+            padding: 30px;
+            margin: 40px 0;
+        }
+        
+        .task-box h3 {
+            color: var(--accent-gold);
+            margin-top: 0;
+        }
+        
+        .task-questions {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .task-category {
+            background: #fafafa;
+            padding: 18px;
+            border-radius: 8px;
+        }
+        
+        .task-category h5 {
+            margin: 0 0 12px 0;
+            font-size: 15px;
+        }
+        
+        .task-category.prevention h5 { color: var(--tier1-green); }
+        .task-category.intervention h5 { color: var(--tier2-orange); }
+        .task-category.correction h5 { color: var(--tier3-red); }
+        
+        .task-category ul {
+            margin: 0;
+            font-size: 14px;
+        }
+        
+        .task-category li {
+            margin-bottom: 8px;
+        }
+        
+        /* Footer */
+        .doc-footer {
+            text-align: center;
+            padding: 30px;
+            background: #f5f5f5;
+            font-size: 13px;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border-light);
+            margin: 40px -60px -50px -60px;
+        }
+        
+        /* Print Styles */
+        @media print {
+            body {
+                background: white;
+            }
+            .document {
+                box-shadow: none;
+            }
+            .pyramid-tier:hover {
+                transform: none;
+            }
+        }
+        
+        @media (max-width: 700px) {
+            .content, .doc-header {
+                padding: 30px;
+            }
+            .challenges-grid, .task-questions {
+                grid-template-columns: 1fr;
+            }
+            .tier-1 { width: 100%; }
+            .tier-2 { width: 85%; }
+            .tier-3 { width: 60%; }
+            .sources-section, .doc-footer {
+                margin-left: -30px;
+                margin-right: -30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="document">
+        <!-- Header -->
+        <header class="doc-header">
+            <div class="institution">
+                אוניברסיטת תל אביב · בית הספר לחינוך · החוג לחינוך מתמטי, מדעי וטכנולוגי
+            </div>
+            <h1 class="doc-title">מודל שלושת הרבדים בניהול כיתה</h1>
+            <div class="doc-subtitle">מסמך לימוד לסטודנטים להוראת מדעי המחשב</div>
+            <div class="doc-meta">
+                <strong>קורס:</strong> סדנה מלווה התנסות מעשית &nbsp;|&nbsp;
+                <strong>בהנחיית:</strong> ד"ר שי פרח &nbsp;|&nbsp;
+                <strong>שנה"ל:</strong> תשפ"ו
+            </div>
+        </header>
+        
+        <!-- Content -->
+        <main class="content">
+            
+            <!-- Introduction -->
+            <h2>מבוא: "פתאום הגיע ספטמבר"</h2>
+            
+            <div class="intro-box">
+                <p>
+                    ספטמבר הוא חודש קשה למורים. אחרי קיץ שבו נרגעתם, פתאום מתחילה שנה חדשה: כיתות חדשות, תלמידים שאתם לא מכירים, צריך להבין מה הם יודעים משנה שעברה, הם עדיין בראש של חופש, ואתם גם. והמון בלאגנים בבית הספר.
+                </p>
+                <p style="margin-bottom: 0;">
+                    אבל האם ספטמבר באמת "פתאום הגיע"? ברור שלא. ספטמבר מגיע כל שנה באותו תאריך. הוא לא מפתיע אף אחד. אז למה זה מרגיש כמו הפתעה? <strong>כי לא התכוננו.</strong>
+                </p>
+            </div>
+            
+            <p>
+                אותו דבר קורה בכיתת מדעי המחשב. יש דברים שמרגישים כמו הפתעות — אבל הם בכלל לא הפתעות. הם צפויים לחלוטין:
+            </p>
+            
+            <ul>
+                <li><strong>מעבר מהלוח למחשב</strong> — אתם יודעים שזה יקרה. השאלה היא: איך?</li>
+                <li><strong>תלמידים שמסיימים מוקדם</strong> — תמיד יהיו כאלה. מה הם עושים?</li>
+                <li><strong>תלמידים שנתקעים</strong> — תמיד יהיו כאלה. איך עוזרים להם?</li>
+                <li><strong>בעיות טכניות</strong> — "לא נפתח לי", "המחשב נתקע". מה עושים?</li>
+                <li><strong>גלישה לאתרים לא רלוונטיים</strong> — זה יקרה. איך מגיבים?</li>
+                <li><strong>כניסה לכיתה מהפסקה</strong> — איך מכניסים אותם למסלול?</li>
+            </ul>
+            
+            <div class="key-point">
+                <strong>כל הדברים האלה הם לא הפתעות. הם צפויים. הם יקרו.</strong> השאלה היא לא <em>אם</em> הם יקרו — השאלה היא <em>האם אתם מוכנים</em>.
+            </div>
+            
+            <p>
+                וזה בדיוק מה שמודל שלושת הרבדים נותן לכם: מסגרת להתכונן לדברים הצפויים, ולא להיות מופתעים כל פעם מחדש.
+            </p>
+            
+            <!-- Historical Background -->
+            <h2>רקע תיאורטי: מאיפה המודל הגיע?</h2>
+            
+            <h3>השורשים: עולם בריאות הציבור</h3>
+            
+            <p>
+                מודל שלושת הרבדים לא נולד בעולם החינוך. הוא לקוח מעולם <strong>בריאות הציבור</strong>. בשנות ה-50 וה-60 של המאה ה-20, חוקרים בתחום הבריאות (Leavell & Clark, 1965) פיתחו מודל של שלוש רמות מניעה:
+            </p>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>רמת מניעה</th>
+                        <th>משמעות</th>
+                        <th>דוגמה רפואית</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>מניעה ראשונית</strong><br><small>(Primary Prevention)</small></td>
+                        <td>למנוע את הבעיה לפני שהיא מתחילה</td>
+                        <td>חיסונים, תזונה בריאה</td>
+                    </tr>
+                    <tr>
+                        <td><strong>מניעה משנית</strong><br><small>(Secondary Prevention)</small></td>
+                        <td>לזהות ולטפל מוקדם</td>
+                        <td>בדיקות סקר, גילוי מוקדם</td>
+                    </tr>
+                    <tr>
+                        <td><strong>מניעה שלישונית</strong><br><small>(Tertiary Prevention)</small></td>
+                        <td>לצמצם נזק ולשקם</td>
+                        <td>טיפול במחלה כרונית, שיקום</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <p>
+                הרעיון המרכזי היה פשוט אך עוצמתי: <strong>ככל שמשקיעים יותר במניעה ראשונית, צריכים פחות התערבויות מתקדמות.</strong>
+            </p>
+            
+            <h3>ההתאמה לעולם החינוך: PBIS</h3>
+            
+            <p>
+                בשנות ה-90, חוקרים מאוניברסיטת אורגון — בראשם <strong>George Sugai</strong> ו-<strong>Robert Horner</strong> — לקחו את המודל והתאימו אותו לעולם החינוך. הם פיתחו מסגרת שנקראת <strong>PBIS</strong> (ראשי תיבות של Positive Behavioral Interventions and Supports — "התערבויות ותמיכות התנהגותיות חיוביות").
+            </p>
+            
+            <p>
+                המסגרת הפכה למסגרת הרשמית של משרד החינוך האמריקאי, ומיושמת כיום ביותר מ-26,000 בתי ספר ברחבי ארצות הברית (Horner & Sugai, 2015). עקרונות היסוד שלה:
+            </p>
+            
+            <ol>
+                <li><strong>גישה חיובית:</strong> התמקדות בחיזוק התנהגויות רצויות, לא רק בענישה על לא-רצויות</li>
+                <li><strong>מניעה:</strong> השקעה בתשתית שמונעת בעיות, לא רק כיבוי שריפות</li>
+                <li><strong>מבוססת נתונים:</strong> שימוש במידע לקבלת החלטות</li>
+                <li><strong>רב-שכבתית:</strong> רמות שונות של תמיכה לצרכים שונים</li>
+            </ol>
+            
+            <!-- The Pyramid -->
+            <h2>מודל שלושת הרבדים: התמונה הכללית</h2>
+            
+            <p>
+                המודל מחלק את ניהול הכיתה לשלושה רבדים, המוצגים כפירמידה:
+            </p>
+            
+            <div class="pyramid-container">
+                <div class="pyramid">
+                    <div class="pyramid-tier tier-3">
+                        <div class="tier-label">
+                            <span>תיקון</span>
+                            <span class="tier-percent">5% מהתלמידים</span>
+                        </div>
+                    </div>
+                    <div class="pyramid-tier tier-2">
+                        <div class="tier-label">
+                            <span>התערבות</span>
+                            <span class="tier-percent">15% מהתלמידים</span>
+                        </div>
+                    </div>
+                    <div class="pyramid-tier tier-1">
+                        <div class="tier-label">
+                            <span>מניעה</span>
+                            <span class="tier-percent">80% מהתלמידים</span>
+                        </div>
+                    </div>
+                </div>
+                <p class="pyramid-caption">
+                    הפירמידה מראה: רוב התלמידים (כ-80%) יגיבו היטב לרובד המניעה בלבד.<br>
+                    רק מיעוט יצטרכו התערבות מוגברת, ומיעוט עוד יותר קטן — תיקון מערכתי.
+                </p>
+            </div>
+            
+            <!-- Tier 1: Prevention -->
+            <div class="tier-section tier-1-section">
+                <h3>רובד ראשון: מניעה — "להקדים תרופה למכה"</h3>
+                
+                <p>
+                    רובד המניעה הוא <strong>הרובד החשוב ביותר</strong>. ככל שנשקיע יותר במניעה, נצטרך פחות התערבות ותיקון. חשבו על זה כמו הנדסת תוכנה: משקיעים בארכיטקטורה טובה מראש כדי למנוע באגים אחר כך. זה הרבה יותר יעיל מאשר לתקן באגים בפרודקשן.
+                </p>
+                
+                <h4>1. תכנון פיזי של הכיתה</h4>
+                <p>בכיתת מחשבים, הסידור הפיזי הוא קריטי:</p>
+                <ul>
+                    <li><strong>סידור המחשבים:</strong> האם אתם יכולים לראות את כל המסכים? האם יש "שטחים מתים"?</li>
+                    <li><strong>מיקום המורה:</strong> האם אתם יכולים לנוע בקלות בין התלמידים?</li>
+                    <li><strong>מעברים:</strong> איך עוברים בין הוראה פרונטלית לעבודה מול מחשב?</li>
+                </ul>
+                
+                <div class="tip-box">
+                    עברו בכיתה הריקה לפני תחילת השנה. שבו במקומות שונים ובדקו — מאיפה רואים הכי טוב? איפה יש נקודות עיוורות?
+                </div>
+                
+                <h4>2. כללים ונהלים ברורים</h4>
+                <p>זה קריטי במיוחד בכיתת מחשבים, כי יש הרבה מצבים שדורשים הנחיה ברורה:</p>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>מצב</th>
+                            <th>שאלה שהתלמיד צריך לדעת לענות עליה</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>גלישה באינטרנט</td><td>מתי מותר? מתי אסור? לאילו אתרים?</td></tr>
+                        <tr><td>צורך בעזרה</td><td>איך מסמנים? מרימים יד? מחכים?</td></tr>
+                        <tr><td>בעיה טכנית</td><td>מה עושים? למי פונים?</td></tr>
+                        <tr><td>סיום מוקדם</td><td>מה עושים אחרי שמסיימים?</td></tr>
+                        <tr><td>עבודה עצמאית</td><td>מה מותר לעשות? מה אסור?</td></tr>
+                    </tbody>
+                </table>
+                
+                <div class="key-point">
+                    הכללים צריכים להיות <strong>מפורשים</strong>. מה שברור לכם — לא בהכרח ברור לתלמיד בן 16. אל תסתמכו על "ברור מאליו".
+                </div>
+                
+                <h4>3. הכנה מראש</h4>
+                <ul>
+                    <li><strong>בדיקת תקינות מחשבים</strong> לפני השיעור</li>
+                    <li><strong>הכנת משימות מדורגות</strong> למי שמסיים מוקדם</li>
+                    <li><strong>תכנון נקודות עצירה</strong> לבדיקת הבנה</li>
+                    <li><strong>תוכנית B</strong> למקרה של בעיות טכניות</li>
+                </ul>
+                
+                <h4>המפתח: עקביות</h4>
+                <p>
+                    המילה החשובה ביותר ברובד המניעה היא <strong>עקביות</strong>. כשהכללים ברורים וקבועים, התלמידים יודעים למה לצפות וכיצד להתנהל. כשמשנים כל יום — יש בלבול ואובדן אמון.
+                </p>
+            </div>
+            
+            <!-- Tier 2: Intervention -->
+            <div class="tier-section tier-2-section">
+                <h3>רובד שני: התערבות — "לכבות שריפות בזמן אמת"</h3>
+                
+                <p>
+                    גם עם ההכנה הכי טובה בעולם, דברים קורים. תלמיד גולש ביוטיוב, שניים מדברים בזמן שאתם מסבירים, מישהו מתוסכל כי הקוד לא עובד. השאלה היא לא <em>אם</em> זה יקרה — אלא <em>איך אתם מגיבים</em>.
+                </p>
+                
+                <h4>שלושה סוגי אתגרים</h4>
+                <ol>
+                    <li><strong>הסחות דעת:</strong> גלישה באתרים לא רלוונטיים, שיחות צד, אובדן ריכוז</li>
+                    <li><strong>בעיות טכניות:</strong> קוד שלא עובד, תוכנה שקרסה, קובץ שלא נשמר</li>
+                    <li><strong>קשיי למידה:</strong> תלמיד שנתקע, פערים בהבנה, תסכול מכישלונות</li>
+                </ol>
+                
+                <div class="warning-box">
+                    הרבה פעמים בעיית התנהגות היא בעצם <strong>בעיית למידה במסווה</strong>. תלמיד שמתחיל להפריע — יכול להיות שהוא פשוט לא מבין ולא יודע איך לבקש עזרה.
+                </div>
+                
+                <h4>שלושת עקרונות ההתערבות הטובה</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>עיקרון</th>
+                            <th>הסבר</th>
+                            <th>דוגמה</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>מיידית</strong></td>
+                            <td>לפני שהבעיה מתפשטת</td>
+                            <td>תלמיד אחד גולש ← מגיבים עכשיו, לפני שיהיו שלושה</td>
+                        </tr>
+                        <tr>
+                            <td><strong>מידתית</strong></td>
+                            <td>בהתאם לחומרת הבעיה</td>
+                            <td>שיחת צד ≠ קריאת שמות למורה</td>
+                        </tr>
+                        <tr>
+                            <td><strong>חיובית</strong></td>
+                            <td>מכוונת לפתרון, לא להענשה</td>
+                            <td>"בוא נחזור לתרגיל" ולא "למה אתה לא מקשיב?!"</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h4>דוגמאות להתערבויות בכיתת מחשבים</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>מצב</th>
+                            <th style="color: #c62828;">❌ התערבות לא מומלצת</th>
+                            <th style="color: #2e7d32;">✓ התערבות מומלצת</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>תלמיד גולש ביוטיוב</td>
+                            <td>"מה אתה עושה?!" (מביך, מסלים)</td>
+                            <td>עמידה ליד התלמיד, מבט קצר למסך, המשך הליכה</td>
+                        </tr>
+                        <tr>
+                            <td>שני תלמידים מדברים</td>
+                            <td>"שקט!" לכל הכיתה</td>
+                            <td>הליכה לכיוונם, המשך ההסבר תוך כדי קרבה פיזית</td>
+                        </tr>
+                        <tr>
+                            <td>תלמיד מתוסכל מקוד</td>
+                            <td>התעלמות (הוא יסתדר)</td>
+                            <td>"אני רואה שאתה נתקע. בוא נראה ביחד"</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Tier 3: Correction -->
+            <div class="tier-section tier-3-section">
+                <h3>רובד שלישי: תיקון — "לשנות דפוסים לטווח ארוך"</h3>
+                
+                <p>
+                    מתי אנחנו ברובד התיקון? <strong>כשאותו דבר קורה שוב ושוב</strong>. זה כבר לא עניין של התערבות חד-פעמית. צריך לחשוב מערכתית.
+                </p>
+                
+                <h4>מצבים שדורשים תיקון</h4>
+                <ul>
+                    <li>תלמיד שבאופן <strong>קבוע</strong> לא מכין שיעורי בית</li>
+                    <li>קבוצה ש<strong>תמיד</strong> מתקשה לעבוד בשקט</li>
+                    <li>בעיות משמעת <strong>חוזרות</strong> עם אותו תלמיד</li>
+                    <li>פערי ידע <strong>משמעותיים</strong> שלא נסגרים</li>
+                    <li>חרדת מחשבים <strong>מתמשכת</strong></li>
+                </ul>
+                
+                <h4>פתרונות מערכתיים</h4>
+                <p>ברובד התיקון, הפתרונות הם לא רק בתוך הכיתה שלכם:</p>
+                <ul>
+                    <li>שיתוף פעולה עם המחנכ/ת</li>
+                    <li>שיתוף ההורים</li>
+                    <li>עבודה עם יועצת בית הספר</li>
+                    <li>בניית תוכנית התערבות אישית</li>
+                </ul>
+                
+                <div class="note-for-students">
+                    אתם בהתנסות. אתם <strong>לא</strong> אמורים לפתור בעיות מהרובד השלישי לבד. אם אתם רואים דפוס חוזר — דברו עם המורה המאמן. זה בדיוק בשביל מה שהוא/היא שם.
+                </div>
+            </div>
+            
+            <!-- Integrated Example -->
+            <h2>איך הכל עובד ביחד: דוגמה משולבת</h2>
+            
+            <div class="example-box">
+                <h4>📋 המקרה: תלמיד שמתקשה להתרכז ומפריע</h4>
+                
+                <div class="example-level prevention">
+                    <h5 style="color: var(--tier1-green);">ברמת המניעה (לפני שמשהו קורה)</h5>
+                    <ul>
+                        <li>ממקמים אותו <strong>קרוב למורה</strong></li>
+                        <li>נותנים לו <strong>משימות מותאמות</strong> ליכולת</li>
+                        <li>מתכננים <strong>זמני עבודה קצרים</strong> יותר עם הפסקות</li>
+                        <li>מגדירים <strong>איתותים מוסכמים</strong> בינו לביניכם</li>
+                    </ul>
+                </div>
+                
+                <div class="example-level intervention">
+                    <h5 style="color: var(--tier2-orange);">ברמת ההתערבות (כשמאבד ריכוז)</h5>
+                    <ul>
+                        <li>משתמשים ב<strong>איתותים המוסכמים</strong> (לא קוראים לו בקול)</li>
+                        <li>נותנים <strong>תזכורות חיוביות</strong> ("יופי, רואה שאתה מתקדם")</li>
+                        <li>כשרואים תסכול — <strong>מציעים עזרה</strong> לפני שמתפרץ</li>
+                    </ul>
+                </div>
+                
+                <div class="example-level correction">
+                    <h5 style="color: var(--tier3-red);">ברמת התיקון (אם הדפוס נמשך)</h5>
+                    <ul>
+                        <li>בונים <strong>תוכנית אישית</strong> עם יעדים ברורים</li>
+                        <li><strong>משתפים את ההורים</strong> בתהליך</li>
+                        <li><strong>מתאימים את סביבת הלמידה</strong> (ישיבה אחרת, משימות אחרות)</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- CS Classroom Challenges -->
+            <h2>אתגרים ייחודיים בכיתת מדעי המחשב</h2>
+            
+            <p>
+                כיתת מדעי המחשב מציבה אתגרים ייחודיים שדורשים התייחסות מיוחדת:
+            </p>
+            
+            <div class="challenges-grid">
+                <div class="challenge-card">
+                    <h4>🖥️ אתגר המסכים</h4>
+                    <p>התלמידים מסתכלים על מסך, לא עליכם. קשה לדעת מה הם עושים.</p>
+                    <div class="solution">פתרון: סידור כיתה שמאפשר לראות מסכים, תנועה מתמדת, כללים ברורים</div>
+                </div>
+                
+                <div class="challenge-card">
+                    <h4>⏱️ פערי קצב</h4>
+                    <p>חלק מסיימים מהר מאוד, חלק נתקעים לאורך זמן.</p>
+                    <div class="solution">פתרון: משימות מדורגות מראש, "משימות בונוס" למסיימים מוקדם</div>
+                </div>
+                
+                <div class="challenge-card">
+                    <h4>⚠️ בעיות טכניות</h4>
+                    <p>תמיד יש משהו שלא עובד. הטכנולוגיה תמיד יכולה להכשיל.</p>
+                    <div class="solution">פתרון: נהלים ברורים למה לעשות כשנתקעים, תוכנית B מוכנה</div>
+                </div>
+                
+                <div class="challenge-card">
+                    <h4>🔄 מעברים</h4>
+                    <p>מהלוח למחשב ובחזרה. רגעים של אובדן קשב.</p>
+                    <div class="solution">פתרון: סימנים מוסכמים להשבת קשב, הוראות ברורות לפני המעבר</div>
+                </div>
+            </div>
+            
+            <!-- Summary -->
+            <div class="summary-box">
+                <h3>סיכום: שלוש נקודות לזכור</h3>
+                
+                <div class="summary-item">
+                    <div class="summary-number">1</div>
+                    <div class="summary-text">
+                        <strong>השקיעו במניעה</strong> — זה הרובד החשוב ביותר. ככל שתשקיעו יותר במניעה, תצטרכו פחות התערבות ותיקון.
+                    </div>
+                </div>
+                
+                <div class="summary-item">
+                    <div class="summary-number">2</div>
+                    <div class="summary-text">
+                        <strong>היו מוכנים לצפוי</strong> — רוב הדברים שמרגישים כמו הפתעות הם לא הפתעות. הם צפויים. תתכוננו אליהם.
+                    </div>
+                </div>
+                
+                <div class="summary-item">
+                    <div class="summary-number">3</div>
+                    <div class="summary-text">
+                        <strong>שלושת הרבדים עובדים ביחד</strong> — זו לא בחירה בין מניעה להתערבות לתיקון. כל הרבדים פועלים במקביל, כל אחד עונה על צרכים שונים.
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Observation Task -->
+            <div class="task-box">
+                <h3>📝 משימה לתצפית</h3>
+                <p>בתצפיות הקרובות שלכם, שימו לב לשלושת הרבדים. תעדו את מה שראיתם בטופס הצפייה, ונדון בזה במפגש הבא.</p>
+                
+                <div class="task-questions">
+                    <div class="task-category prevention">
+                        <h5>שאלות על מניעה</h5>
+                        <ul>
+                            <li>איך הכיתה מסודרת פיזית?</li>
+                            <li>האם יש כללים מפורשים? איפה?</li>
+                            <li>האם המורה הכין משימות מדורגות?</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="task-category intervention">
+                        <h5>שאלות על התערבות</h5>
+                        <ul>
+                            <li>איך המורה מגיב כשתלמיד לא בקשב?</li>
+                            <li>האם ההתערבות מיידית? מידתית? חיובית?</li>
+                            <li>איך מטפלים בבעיות טכניות?</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="task-category correction">
+                        <h5>שאלות על תיקון</h5>
+                        <ul>
+                            <li>האם ראיתם תלמיד שמקבל התייחסות מיוחדת?</li>
+                            <li>האם יש סימנים לתוכניות אישיות?</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sources -->
+            <section class="sources-section">
+                <h3>מקורות להרחבה</h3>
+                
+                <h4>מקורות אקדמיים עיקריים</h4>
+                <p class="source-item">
+                    Horner, R. H., & Sugai, G. (2015). School-wide PBIS: An example of applied behavior analysis implemented at a scale of social importance. <em>Behavior Analysis in Practice, 8</em>, 80-85.
+                </p>
+                <p class="source-item">
+                    Sugai, G., & Horner, R. H. (2009). Responsiveness-to-intervention and school-wide positive behavior supports: Integration of multi-tiered system approaches. <em>Exceptionality, 17</em>(4), 223-237.
+                </p>
+                <p class="source-item">
+                    Walker, H., Horner, R. H., Sugai, G., Bullis, M., Sprague, J. R., Bricker, D., & Kaufman, M. J. (1996). Integrated approaches to preventing antisocial behavior patterns among school-age children and youth. <em>Journal of Emotional and Behavioral Disorders, 4</em>, 194-209.
+                </p>
+                
+                <h4>אתרים מומלצים</h4>
+                <p class="source-item">
+                    <strong>Center on PBIS:</strong> <a href="https://www.pbis.org" target="_blank">www.pbis.org</a> — המרכז הלאומי האמריקאי ל-PBIS
+                </p>
+                <p class="source-item">
+                    <strong>Midwest PBIS Network:</strong> <a href="https://www.midwestpbis.org" target="_blank">www.midwestpbis.org</a> — משאבים מעשיים ליישום
+                </p>
+            </section>
+            
+        </main>
+        
+        <!-- Footer -->
+        <footer class="doc-footer">
+            מסמך זה נכתב במסגרת הסדנה המלווה התנסות מעשית בהוראת מדעי המחשב<br>
+            אוניברסיטת תל אביב · בית הספר לחינוך · תשפ"ו
+        </footer>
+        
+    </div>
+</body>
+</html>
