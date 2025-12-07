@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מיני-פרויקט חנוכה: סיווג ומיקום אובייקט</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+            line-height: 1.8;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            text-align: center;
+            border-bottom: 3px solid #2196F3;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: #1976D2;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+        
+        .header .subtitle {
+            color: #666;
+            font-size: 1.1em;
+        }
+        
+        .meta-info {
+            background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        
+        .meta-info table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .meta-info td {
+            padding: 8px 0;
+        }
+        
+        .meta-info td:first-child {
+            font-weight: bold;
+            width: 120px;
+            color: #1565C0;
+        }
+        
+        h2 {
+            color: #1976D2;
+            border-bottom: 2px solid #E3F2FD;
+            padding-bottom: 10px;
+            margin-top: 40px;
+        }
+        
+        h3 {
+            color: #1565C0;
+            margin-top: 25px;
+        }
+        
+        .important-box {
+            background: #FFF3E0;
+            border-right: 4px solid #FF9800;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .important-box.red {
+            background: #FFEBEE;
+            border-right-color: #F44336;
+        }
+        
+        .important-box.green {
+            background: #E8F5E9;
+            border-right-color: #4CAF50;
+        }
+        
+        .important-box.blue {
+            background: #E3F2FD;
+            border-right-color: #2196F3;
+        }
+        
+        .submission-box {
+            background: #FCE4EC;
+            border: 2px solid #E91E63;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 25px 0;
+        }
+        
+        .submission-box h3 {
+            color: #C2185B;
+            margin-top: 0;
+        }
+        
+        ul, ol {
+            padding-right: 25px;
+        }
+        
+        li {
+            margin-bottom: 8px;
+        }
+        
+        code {
+            background: #ECEFF1;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: Consolas, Monaco, monospace;
+            font-size: 0.9em;
+            direction: ltr;
+            display: inline-block;
+        }
+        
+        .code-block {
+            background: #263238;
+            color: #ECEFF1;
+            padding: 15px;
+            border-radius: 8px;
+            direction: ltr;
+            text-align: left;
+            overflow-x: auto;
+            font-family: Consolas, Monaco, monospace;
+            font-size: 0.9em;
+            margin: 15px 0;
+        }
+        
+        table.criteria {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        table.criteria th, table.criteria td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: right;
+        }
+        
+        table.criteria th {
+            background: #1976D2;
+            color: white;
+        }
+        
+        table.criteria tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        
+        .step {
+            background: #FAFAFA;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid #E0E0E0;
+        }
+        
+        .step-number {
+            background: #1976D2;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 10px;
+            font-weight: bold;
+        }
+        
+        .tip {
+            background: #E8F5E9;
+            padding: 12px 15px;
+            border-radius: 6px;
+            margin: 10px 0;
+        }
+        
+        .tip::before {
+            content: "💡 ";
+        }
+        
+        .warning {
+            background: #FFF8E1;
+            padding: 12px 15px;
+            border-radius: 6px;
+            margin: 10px 0;
+        }
+        
+        .warning::before {
+            content: "⚠️ ";
+        }
+        
+        .emoji-title {
+            font-size: 1.3em;
+        }
+        
+        a {
+            color: #1976D2;
+            text-decoration: none;
+        }
+        
+        a:hover {
+            text-decoration: underline;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            color: #666;
+        }
+        
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 מיני-פרויקט חנוכה</h1>
+            <div class="subtitle">סיווג ומיקום אובייקט (Classification & Localization)</div>
+        </div>
+        
+        <div class="meta-info">
+            <table>
+                <tr>
+                    <td>קורס:</td>
+                    <td>למידת מכונה, כיתה י"ב</td>
+                </tr>
+                <tr>
+                    <td>בית ספר:</td>
+                    <td>עירוני ד׳ תל אביב</td>
+                </tr>
+                <tr>
+                    <td>שנה"ל:</td>
+                    <td>תשפ"ו</td>
+                </tr>
+                <tr>
+                    <td>מנחה:</td>
+                    <td>ד"ר שי פרח</td>
+                </tr>
+                <tr>
+                    <td>מועד הגשה:</td>
+                    <td><strong>22 בדצמבר, 2025</strong></td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Submission Instructions -->
+        <div class="submission-box">
+            <h3>📋 הנחיות הגשה</h3>
+            <p><strong>הגשה בזוגות</strong></p>
+            <ul>
+                <li><strong>שני חברי הצוות</strong> מגישים את המשימה ב-Classroom</li>
+                <li>שניהם כותבים בהגשה <strong>מיהם חברי הצוות</strong></li>
+                <li><strong>רק אחד מהם</strong> מגיש את קבצי הפרויקט בפועל</li>
+                <li><strong>השני</strong> מגיש הגשה ריקה תוך ציון שמות חברי הצוות</li>
+            </ul>
+        </div>
+
+        <!-- Introduction -->
+        <h2><span class="emoji-title">📖</span> מבוא</h2>
+        <p>
+            בפרויקט זה תבנו <strong>אפליקציה מלאה</strong> לזיהוי ומיקום אובייקטים בתמונות - 
+            מאיסוף הנתונים ועד לממשק משתמש עובד.
+        </p>
+        
+        <h3>מה תלמדו?</h3>
+        <ul>
+            <li>איסוף ותיוג נתונים לבעיות Computer Vision</li>
+            <li>עבודה עם כלי תיוג מקצועי (Roboflow)</li>
+            <li>אימון מודל Multi-Task (סיווג + רגרסיה)</li>
+            <li>בניית אפליקציה אינטראקטיבית עם Gradio</li>
+        </ul>
+
+        <h3>מה תגישו?</h3>
+        <ol>
+            <li>מחברת Colab עובדת עם כל הקוד</li>
+            <li>קישור לאפליקציית Gradio פעילה</li>
+            <li><strong>סרטון קצר (1-2 דקות)</strong> שמדגים את האפליקציה בפעולה</li>
+        </ol>
+
+        <!-- Task Description -->
+        <h2><span class="emoji-title">📝</span> תיאור המשימה</h2>
+        
+        <div class="important-box blue">
+            <strong>המשימה הכללית:</strong> בנו מודל שמקבל תמונה ומחזיר:
+            <ol>
+                <li><strong>מה</strong> יש בתמונה (Classification) - לפחות 2 קלאסים</li>
+                <li><strong>איפה</strong> זה נמצא (Localization) - Bounding Box</li>
+            </ol>
+        </div>
+
+        <h3>דוגמאות לנושאים אפשריים</h3>
+        <ul>
+            <li><strong>פירות:</strong> תפוח vs בננה</li>
+            <li><strong>כלי כתיבה:</strong> עט vs עיפרון</li>
+            <li><strong>מטבעות:</strong> 1 ש"ח vs 2 ש"ח</li>
+            <li><strong>כלים:</strong> מברג vs מפתח ברגים</li>
+            <li><strong>אביזרים:</strong> שעון vs צמיד</li>
+            <li>או כל נושא אחר שמעניין אתכם!</li>
+        </ul>
+
+        <h3>דרישות טכניות</h3>
+        <ul>
+            <li>לפחות <strong>50 תמונות</strong> לכל קלאס (סה"כ מינימום 100 תמונות)</li>
+            <li>תמונות מקוריות (צילום עצמי או הורדה מהאינטרנט - <strong>לא Dataset מוכן</strong>)</li>
+            <li>מגוון: זוויות שונות, תאורות שונות, רקעים שונים</li>
+            <li>שימוש ב-<strong>Transfer Learning</strong> (לא אימון מאפס)</li>
+        </ul>
+
+        <!-- Steps -->
+        <h2><span class="emoji-title">🚀</span> שלבי העבודה</h2>
+
+        <div class="step">
+            <h3><span class="step-number">1</span> איסוף תמונות</h3>
+            <p><strong>מטרה:</strong> 50-100 תמונות לכל קלאס</p>
+            <p><strong>אפשרויות לאיסוף:</strong></p>
+            <ul>
+                <li>צילום עצמי (מומלץ!)</li>
+                <li>הורדה מ-Google Images / Unsplash / Pexels</li>
+                <li>שילוב של השניים</li>
+            </ul>
+            <div class="tip">
+                צלמו מזוויות שונות, השתמשו ברקעים מגוונים, וכללו תאורות שונות.
+            </div>
+        </div>
+
+        <div class="step">
+            <h3><span class="step-number">2</span> תיוג ב-Roboflow</h3>
+            <p>ראו את <strong>מדריך Roboflow המפורט</strong> בהמשך המסמך.</p>
+            <p><strong>תוצאה:</strong> קבצי Dataset מוכנים להורדה בפורמט COCO JSON</p>
+        </div>
+
+        <div class="step">
+            <h3><span class="step-number">3</span> טעינת הנתונים והכנתם</h3>
+            <p><strong>מטרה:</strong> להפוך את הנתונים מ-Roboflow ל-<code>tf.data.Dataset</code></p>
+            <p>השתמשו בקוד המוכן במחברת הסטארטר שניתנה לכם.</p>
+            <p><strong>הציגו:</strong> 5-10 תמונות עם ה-Bounding Boxes מצוירים עליהן</p>
+        </div>
+
+        <div class="step">
+            <h3><span class="step-number">4</span> בניית ואימון המודל</h3>
+            <p><strong>בסיס:</strong> המחברת של Classification & Localization על MNIST</p>
+            <p><strong>ארכיטקטורה מומלצת:</strong></p>
+            <div class="code-block">
+Input Image
+    ↓
+Pre-trained Backbone (MobileNetV2)
+    ↓
+Global Average Pooling
+    ↓
+Dense(256, relu)
+    ↓
+    ├── Dense(num_classes, softmax) → Classification
+    └── Dense(4, linear) → Bounding Box
+            </div>
+            <p><strong>Loss Functions:</strong></p>
+            <ul>
+                <li>Classification: <code>categorical_crossentropy</code></li>
+                <li>Bounding Box: <code>mse</code> או <code>huber</code></li>
+            </ul>
+        </div>
+
+        <div class="step">
+            <h3><span class="step-number">5</span> הערכת המודל</h3>
+            <p><strong>מדדים להציג:</strong></p>
+            <ul>
+                <li><strong>Classification Accuracy</strong> על סט הבדיקה</li>
+                <li><strong>Mean IoU</strong> (Intersection over Union)</li>
+                <li><strong>ויזואליזציה:</strong> תמונות עם Bounding Box אמיתי (ירוק) וחזוי (אדום)</li>
+            </ul>
+        </div>
+
+        <div class="step">
+            <h3><span class="step-number">6</span> בניית אפליקציית Gradio</h3>
+            <p><strong>מטרה:</strong> ממשק פשוט שמאפשר:</p>
+            <ol>
+                <li>העלאת תמונה</li>
+                <li>הפעלת המודל</li>
+                <li>הצגת התוצאה עם Bounding Box מצויר</li>
+            </ol>
+            <p>ראו: מדריך Gradio שניתן לכם</p>
+        </div>
+
+        <!-- Roboflow Guide -->
+        <h2><span class="emoji-title">📚</span> מדריך Roboflow מפורט</h2>
+
+        <h3>מה זה Roboflow?</h3>
+        <p>
+            Roboflow היא פלטפורמה לניהול פרויקטי Computer Vision. היא מאפשרת:
+            העלאת תמונות, תיוג (Annotation) עם Bounding Boxes, וייצוא בפורמטים שונים.
+        </p>
+
+        <h3>שלב 1: יצירת חשבון</h3>
+        <ol>
+            <li>היכנסו ל-<a href="https://roboflow.com" target="_blank">roboflow.com</a></li>
+            <li>לחצו <strong>Sign Up</strong></li>
+            <li><strong>חשוב:</strong> בחרו <strong>Public Plan</strong> - זה נותן לכם עד 10,000 תמונות בחינם!</li>
+            <li>השלימו את ההרשמה (אפשר עם Google)</li>
+        </ol>
+
+        <h3>שלב 2: יצירת פרויקט</h3>
+        <ol>
+            <li>בדף הבית, לחצו <strong>Create New Project</strong></li>
+            <li>מלאו:
+                <ul>
+                    <li><strong>Project Name:</strong> שם משמעותי (למשל: "Fruit Classification")</li>
+                    <li><strong>Project Type:</strong> בחרו <strong>Object Detection</strong></li>
+                    <li><strong>Annotation Group:</strong> תארו מה אתם מתייגים</li>
+                </ul>
+            </li>
+            <li>לחצו <strong>Create Project</strong></li>
+        </ol>
+
+        <h3>שלב 3: העלאת תמונות</h3>
+        <ol>
+            <li>גררו את התמונות לאזור ה-Upload</li>
+            <li>חכו שכל התמונות יעלו</li>
+            <li>לחצו <strong>Save and Continue</strong></li>
+        </ol>
+
+        <h3>שלב 4: תיוג (Annotation)</h3>
+        <ol>
+            <li>לחצו על <strong>Annotate</strong> בתפריט השמאלי</li>
+            <li>לחצו על תמונה להתחיל לתייג</li>
+            <li><strong>לצייר Bounding Box:</strong>
+                <ul>
+                    <li>לחצו על אייקון הריבוע (או מקש <code>B</code>)</li>
+                    <li>גררו מלבן סביב האובייקט</li>
+                    <li>בחרו את הקלאס מהרשימה</li>
+                </ul>
+            </li>
+            <li>עברו לתמונה הבאה (חצים או מקשים <code>A</code>/<code>D</code>)</li>
+        </ol>
+
+        <div class="tip">
+            הקיפו את האובייקט <strong>בצמוד</strong> - לא יותר מדי רחב. שמרו על עקביות!
+        </div>
+
+        <h3>שלב 5: יצירת גרסה (Version)</h3>
+        <ol>
+            <li>לחצו על <strong>Generate</strong> בתפריט השמאלי</li>
+            <li>הגדרות מומלצות:
+                <ul>
+                    <li><strong>Preprocessing:</strong> Auto-Orient ✓, Resize: 224×224</li>
+                    <li><strong>Train/Valid/Test Split:</strong> 70% / 20% / 10%</li>
+                </ul>
+            </li>
+            <li>לחצו <strong>Generate</strong></li>
+        </ol>
+
+        <h3>שלב 6: ייצוא הנתונים</h3>
+        <ol>
+            <li>אחרי שהגרסה נוצרה, לחצו <strong>Export</strong></li>
+            <li>בחרו פורמט: <strong>COCO</strong> (תחת JSON)</li>
+            <li>בחרו <strong>show download code</strong></li>
+            <li>העתיקו את קוד ה-Python - תשתמשו בו במחברת!</li>
+        </ol>
+
+        <div class="warning">
+            שימו לב: קישורי <code>gradio.live</code> פעילים 72 שעות בלבד. וודאו שהמחברת רצה כשאתם מגישים.
+        </div>
+
+        <!-- Evaluation Criteria -->
+        <h2><span class="emoji-title">📊</span> קריטריונים להערכה</h2>
+        
+        <table class="criteria">
+            <tr>
+                <th>רכיב</th>
+                <th>משקל</th>
+                <th>תיאור</th>
+            </tr>
+            <tr>
+                <td>Dataset</td>
+                <td>20%</td>
+                <td>מגוון, איכות תיוג, כמות מספקת</td>
+            </tr>
+            <tr>
+                <td>מודל</td>
+                <td>30%</td>
+                <td>ארכיטקטורה נכונה, אימון תקין</td>
+            </tr>
+            <tr>
+                <td>ביצועים</td>
+                <td>20%</td>
+                <td>דיוק סיווג, IoU סביר</td>
+            </tr>
+            <tr>
+                <td>Gradio</td>
+                <td>15%</td>
+                <td>אפליקציה עובדת ונוחה</td>
+            </tr>
+            <tr>
+                <td>סרטון</td>
+                <td>15%</td>
+                <td>הדגמה ברורה</td>
+            </tr>
+        </table>
+
+        <!-- FAQ -->
+        <h2><span class="emoji-title">❓</span> שאלות נפוצות</h2>
+        
+        <p><strong>ש: כמה תמונות באמת צריך?</strong></p>
+        <p>ת: עם Transfer Learning, 50-100 תמונות לקלאס יספיקו לתוצאות סבירות. יותר = טוב יותר.</p>
+        
+        <p><strong>ש: מה אם המודל לא מצליח?</strong></p>
+        <p>ת: בדקו קודם את הנתונים (האם התיוג נכון?), נסו להגדיל את ה-dataset, או לשנות hyperparameters.</p>
+        
+        <p><strong>ש: הקישור של Gradio נסגר?</strong></p>
+        <p>ת: קישורי <code>gradio.live</code> פעילים 72 שעות. וודאו שהמחברת רצה כשאתם מגישים.</p>
+
+        <!-- Resources -->
+        <h2><span class="emoji-title">📎</span> משאבים</h2>
+        <ul>
+            <li><strong>מחברת Localization על MNIST</strong> - הבסיס לארכיטקטורת המודל</li>
+            <li><strong>מדריך Gradio</strong> - איך לבנות ממשק משתמש</li>
+            <li><strong>מחברת סטארטר</strong> - קוד מוכן לטעינת נתונים מ-Roboflow</li>
+            <li><strong>תיעוד Roboflow:</strong> <a href="https://docs.roboflow.com" target="_blank">docs.roboflow.com</a></li>
+        </ul>
+
+        <div class="important-box green">
+            <strong>בהצלחה! 🚀</strong><br>
+            אם יש שאלות, פנו אליי בכיתה או בוואטסאפ.
+        </div>
+
+        <div class="footer">
+            מיני-פרויקט חנוכה תשפ"ו | למידת מכונה י"ב | עירוני ד׳ תל אביב<br>
+            מנחה: ד"ר שי פרח
+        </div>
+    </div>
+</body>
+</html>
