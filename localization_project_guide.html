@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מדריך מלווה: הבנת הקוד בפרויקט Localization</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+            line-height: 1.9;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            text-align: center;
+            border-bottom: 3px solid #9C27B0;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: #7B1FA2;
+            margin-bottom: 10px;
+        }
+        
+        .encouragement {
+            background: linear-gradient(135deg, #E1BEE7 0%, #CE93D8 100%);
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .encouragement h2 {
+            color: #4A148C;
+            margin-top: 0;
+        }
+        
+        .encouragement p {
+            font-size: 1.1em;
+            margin-bottom: 0;
+        }
+        
+        h2 {
+            color: #7B1FA2;
+            border-bottom: 2px solid #E1BEE7;
+            padding-bottom: 10px;
+            margin-top: 50px;
+        }
+        
+        h3 {
+            color: #9C27B0;
+            margin-top: 30px;
+        }
+        
+        h4 {
+            color: #AB47BC;
+            margin-top: 20px;
+        }
+        
+        .concept-box {
+            background: #FFF8E1;
+            border-right: 4px solid #FFC107;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .concept-box h4 {
+            color: #F57F17;
+            margin-top: 0;
+        }
+        
+        .analogy-box {
+            background: #E8F5E9;
+            border-right: 4px solid #4CAF50;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .analogy-box::before {
+            content: "🎯 אנלוגיה: ";
+            font-weight: bold;
+            color: #2E7D32;
+        }
+        
+        .code-explanation {
+            background: #ECEFF1;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .code-block {
+            background: #263238;
+            color: #ECEFF1;
+            padding: 15px;
+            border-radius: 8px;
+            direction: ltr;
+            text-align: left;
+            overflow-x: auto;
+            font-family: Consolas, Monaco, monospace;
+            font-size: 0.9em;
+            margin: 15px 0;
+        }
+        
+        .code-block .comment {
+            color: #78909C;
+        }
+        
+        .code-block .keyword {
+            color: #82B1FF;
+        }
+        
+        .code-block .string {
+            color: #C3E88D;
+        }
+        
+        .code-block .function {
+            color: #FFCB6B;
+        }
+        
+        code {
+            background: #ECEFF1;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: Consolas, Monaco, monospace;
+            font-size: 0.9em;
+            direction: ltr;
+            display: inline-block;
+        }
+        
+        .line-by-line {
+            background: #FAFAFA;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        .line-by-line .line {
+            display: flex;
+            border-bottom: 1px solid #E0E0E0;
+        }
+        
+        .line-by-line .line:last-child {
+            border-bottom: none;
+        }
+        
+        .line-by-line .code-part {
+            background: #263238;
+            color: #ECEFF1;
+            padding: 12px 15px;
+            font-family: Consolas, Monaco, monospace;
+            font-size: 0.85em;
+            direction: ltr;
+            width: 45%;
+            white-space: nowrap;
+            overflow-x: auto;
+        }
+        
+        .line-by-line .explain-part {
+            padding: 12px 15px;
+            width: 55%;
+            background: white;
+        }
+        
+        .step-card {
+            background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+            border-radius: 12px;
+            padding: 25px;
+            margin: 25px 0;
+        }
+        
+        .step-card h3 {
+            color: #1565C0;
+            margin-top: 0;
+        }
+        
+        .warning-box {
+            background: #FFEBEE;
+            border-right: 4px solid #F44336;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .tip-box {
+            background: #E3F2FD;
+            border-right: 4px solid #2196F3;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        .summary-table th, .summary-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: right;
+        }
+        
+        .summary-table th {
+            background: #7B1FA2;
+            color: white;
+        }
+        
+        .summary-table tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        
+        .flow-diagram {
+            background: #FAFAFA;
+            border: 2px solid #E0E0E0;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 25px 0;
+            text-align: center;
+        }
+        
+        .flow-diagram .arrow {
+            font-size: 1.5em;
+            color: #9C27B0;
+            margin: 10px 0;
+        }
+        
+        .flow-diagram .box {
+            background: white;
+            border: 2px solid #9C27B0;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px auto;
+            max-width: 300px;
+        }
+        
+        .toc {
+            background: #F3E5F5;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        
+        .toc h3 {
+            margin-top: 0;
+            color: #7B1FA2;
+        }
+        
+        .toc ul {
+            margin-bottom: 0;
+        }
+        
+        .toc a {
+            color: #7B1FA2;
+            text-decoration: none;
+        }
+        
+        .toc a:hover {
+            text-decoration: underline;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📖 מדריך מלווה לפרויקט Localization</h1>
+            <p>הסברים מפורטים לכל חלק במחברת הסטארטר</p>
+        </div>
+
+        <div class="encouragement">
+            <h2>💪 לפני שמתחילים</h2>
+            <p>
+                הפרויקט הזה אולי נראה מפחיד במבט ראשון - הרבה קוד, הרבה מושגים חדשים.<br>
+                אבל הנה הסוד: <strong>כל שלב בפני עצמו הוא פשוט וטכני.</strong><br>
+                אתם כבר יודעים את כל מה שצריך. עכשיו רק משלבים את הכל יחד.
+            </p>
+        </div>
+
+        <div class="toc">
+            <h3>תוכן עניינים</h3>
+            <ul>
+                <li><a href="#big-picture">התמונה הגדולה - מה אנחנו בונים?</a></li>
+                <li><a href="#json">רקע: מה זה JSON?</a></li>
+                <li><a href="#part2">חלק 2: הורדת נתונים מ-Roboflow</a></li>
+                <li><a href="#part3">חלק 3: טעינת נתונים מפורמט COCO</a></li>
+                <li><a href="#part4">חלק 4: יצירת tf.data.Dataset</a></li>
+                <li><a href="#part6">חלק 6: בניית המודל</a></li>
+                <li><a href="#part8">חלק 8: אפליקציית Gradio</a></li>
+                <li><a href="#debugging">טיפים לפתרון בעיות</a></li>
+            </ul>
+        </div>
+
+        <!-- Big Picture -->
+        <h2 id="big-picture">🗺️ התמונה הגדולה - מה אנחנו בונים?</h2>
+        
+        <p>לפני שצוללים לקוד, בואו נבין את הזרימה הכללית:</p>
+        
+        <div class="flow-diagram">
+            <div class="box"><strong>תמונות שצילמתם</strong><br>קבצי JPG/PNG</div>
+            <div class="arrow">⬇️</div>
+            <div class="box"><strong>Roboflow</strong><br>תיוג + ייצוא</div>
+            <div class="arrow">⬇️</div>
+            <div class="box"><strong>קבצי COCO JSON</strong><br>תמונות + אנוטציות</div>
+            <div class="arrow">⬇️</div>
+            <div class="box"><strong>tf.data.Dataset</strong><br>נתונים מוכנים לאימון</div>
+            <div class="arrow">⬇️</div>
+            <div class="box"><strong>מודל מאומן</strong><br>Classification + Localization</div>
+            <div class="arrow">⬇️</div>
+            <div class="box"><strong>אפליקציית Gradio</strong><br>ממשק משתמש</div>
+        </div>
+
+        <p>
+            <strong>שימו לב:</strong> כל חץ בתרשים הוא "תרגום" - אנחנו לוקחים מידע בפורמט אחד 
+            והופכים אותו לפורמט אחר. זה הכל. אין כאן קסמים.
+        </p>
+
+        <!-- JSON Background -->
+        <h2 id="json">📋 רקע: מה זה JSON?</h2>
+        
+        <div class="concept-box">
+            <h4>מה זה JSON?</h4>
+            <p>
+                <strong>JSON</strong> (JavaScript Object Notation) הוא פורמט לשמירת מידע בקובץ טקסט.
+                זה כמו טבלת Excel, רק בפורמט שמחשבים אוהבים לקרוא.
+            </p>
+        </div>
+
+        <div class="analogy-box">
+            תחשבו על JSON כמו על <strong>רשימת קניות מאורגנת</strong>. 
+            במקום לכתוב "תפוחים בננות חלב", אתם כותבים את זה בצורה מסודרת עם קטגוריות.
+        </div>
+
+        <h4>דוגמה פשוטה:</h4>
+        <div class="code-block">
+{
+    "name": "Yossi",
+    "age": 17,
+    "hobbies": ["basketball", "gaming", "coding"],
+    "grades": {
+        "math": 95,
+        "physics": 88
+    }
+}
+        </div>
+
+        <h4>הכללים של JSON:</h4>
+        <ul>
+            <li><strong>סוגריים מסולסלים <code>{ }</code></strong> - מכילים אובייקט (מילון)</li>
+            <li><strong>סוגריים מרובעים <code>[ ]</code></strong> - מכילים רשימה</li>
+            <li><strong>מפתח: ערך</strong> - כל פריט הוא זוג של שם וערך</li>
+            <li><strong>פסיקים</strong> - מפרידים בין פריטים</li>
+        </ul>
+
+        <h4>למה JSON ולא Excel?</h4>
+        <ul>
+            <li>✅ קל לקרוא בכל שפת תכנות</li>
+            <li>✅ תומך במבנים מקוננים (רשימה בתוך רשימה)</li>
+            <li>✅ פורמט סטנדרטי - כולם משתמשים בו</li>
+            <li>✅ קובץ טקסט פשוט - אפשר לפתוח בכל עורך</li>
+        </ul>
+
+        <h4>איך קוראים JSON ב-Python?</h4>
+        <div class="code-block">
+import json
+
+# Read JSON file
+with open("data.json", "r") as f:
+    data = json.load(f)
+
+# Now 'data' is a Python dictionary!
+print(data["name"])  # Output: Yossi
+print(data["hobbies"][0])  # Output: basketball
+        </div>
+
+        <!-- Part 2: Roboflow -->
+        <h2 id="part2">📥 חלק 2: הורדת נתונים מ-Roboflow</h2>
+
+        <div class="step-card">
+            <h3>מה המטרה?</h3>
+            <p>להוריד את ה-Dataset שיצרתם ב-Roboflow אל המחברת שלכם ב-Colab.</p>
+        </div>
+
+        <h3>הקוד המלא:</h3>
+        <div class="code-block">
+from roboflow import Roboflow
+rf = Roboflow(api_key="YOUR_API_KEY")
+project = rf.workspace("your-workspace").project("your-project")
+version = project.version(1)
+dataset = version.download("coco")
+        </div>
+
+        <div class="analogy-box">
+            תחשבו על זה כמו <strong>להוריד קובץ מ-Google Drive דרך קוד</strong>.
+            אתם צריכים להתחבר לחשבון, לנווט לתיקייה, ולהוריד את הקובץ.
+        </div>
+
+        <h3>שורה אחרי שורה:</h3>
+        <div class="line-by-line">
+            <div class="line">
+                <div class="code-part">from roboflow import Roboflow</div>
+                <div class="explain-part">ייבוא הספרייה של Roboflow (כמו <code>import numpy</code>)</div>
+            </div>
+            <div class="line">
+                <div class="code-part">rf = Roboflow(api_key="...")</div>
+                <div class="explain-part"><strong>התחברות לחשבון</strong> - ה-API key הוא כמו סיסמה שמזהה אתכם</div>
+            </div>
+            <div class="line">
+                <div class="code-part">rf.workspace("your-workspace")</div>
+                <div class="explain-part">כניסה ל-Workspace (מעין "תיקייה ראשית" בחשבון שלכם)</div>
+            </div>
+            <div class="line">
+                <div class="code-part">.project("your-project")</div>
+                <div class="explain-part">בחירת הפרויקט הספציפי שיצרתם</div>
+            </div>
+            <div class="line">
+                <div class="code-part">.version(1)</div>
+                <div class="explain-part">בחירת גרסה (כל פעם שעושים Generate נוצרת גרסה חדשה)</div>
+            </div>
+            <div class="line">
+                <div class="code-part">dataset = version.download("coco")</div>
+                <div class="explain-part"><strong>הורדה בפורמט COCO</strong> - זה הפורמט שנעבוד איתו</div>
+            </div>
+        </div>
+
+        <div class="tip-box">
+            <strong>💡 החדשות הטובות:</strong> אתם לא צריכים לכתוב את הקוד הזה בעצמכם!
+            כשתלחצו "Export" ב-Roboflow, הוא ייתן לכם את הקוד המדויק עם כל הפרטים שלכם כבר מוזנים.
+            פשוט Copy-Paste.
+        </div>
+
+        <h3>מה נוצר אחרי ההורדה?</h3>
+        <p>תיקייה עם המבנה הבא:</p>
+        <div class="code-block">
+your-project-1/
+├── train/
+│   ├── image1.jpg
+│   ├── image2.jpg
+│   ├── ...
+│   └── _annotations.coco.json  ← כל המידע על תמונות האימון
+├── valid/
+│   ├── ...
+│   └── _annotations.coco.json  ← כל המידע על תמונות הוולידציה
+└── test/
+    ├── ...
+    └── _annotations.coco.json  ← כל המידע על תמונות הבדיקה
+        </div>
+
+        <!-- Part 3: Loading COCO -->
+        <h2 id="part3">📂 חלק 3: טעינת נתונים מפורמט COCO</h2>
+
+        <div class="step-card">
+            <h3>מה המטרה?</h3>
+            <p>לקרוא את קבצי ה-JSON ולחלץ מהם את המידע שאנחנו צריכים: 
+            נתיבי תמונות, תוויות, ו-Bounding Boxes.</p>
+        </div>
+
+        <h3>מה יש בקובץ COCO JSON?</h3>
+        
+        <p>קובץ <code>_annotations.coco.json</code> מכיל שלושה חלקים:</p>
+
+        <div class="code-block">
+{
+    "images": [
+        {"id": 1, "file_name": "apple_001.jpg", "width": 640, "height": 480},
+        {"id": 2, "file_name": "banana_001.jpg", "width": 640, "height": 480}
+    ],
+    
+    "categories": [
+        {"id": 1, "name": "apple"},
+        {"id": 2, "name": "banana"}
+    ],
+    
+    "annotations": [
+        {"id": 1, "image_id": 1, "category_id": 1, "bbox": [100, 150, 200, 180]},
+        {"id": 2, "image_id": 2, "category_id": 2, "bbox": [50, 80, 250, 200]}
+    ]
+}
+        </div>
+
+        <table class="summary-table">
+            <tr>
+                <th>חלק</th>
+                <th>מה הוא מכיל</th>
+                <th>דוגמה</th>
+            </tr>
+            <tr>
+                <td><strong>images</strong></td>
+                <td>רשימת כל התמונות - שם קובץ, מימדים, ו-ID ייחודי</td>
+                <td>תמונה מספר 1 היא "apple_001.jpg" בגודל 640×480</td>
+            </tr>
+            <tr>
+                <td><strong>categories</strong></td>
+                <td>רשימת כל הקלאסים (הקטגוריות)</td>
+                <td>קטגוריה 1 = "apple", קטגוריה 2 = "banana"</td>
+            </tr>
+            <tr>
+                <td><strong>annotations</strong></td>
+                <td>רשימת כל התיוגים - איזו תמונה, איזה קלאס, ואיפה ה-bbox</td>
+                <td>בתמונה 1 יש apple במיקום [100, 150, 200, 180]</td>
+            </tr>
+        </table>
+
+        <h3>מה זה bbox בפורמט COCO?</h3>
+        
+        <div class="concept-box">
+            <h4>פורמט COCO: [x, y, width, height]</h4>
+            <ul>
+                <li><code>x</code> - המרחק מהקצה השמאלי של התמונה (בפיקסלים)</li>
+                <li><code>y</code> - המרחק מהקצה העליון של התמונה (בפיקסלים)</li>
+                <li><code>width</code> - רוחב התיבה (בפיקסלים)</li>
+                <li><code>height</code> - גובה התיבה (בפיקסלים)</li>
+            </ul>
+        </div>
+
+        <p><strong>אבל המודל שלנו צריך פורמט אחר!</strong></p>
+
+        <div class="concept-box">
+            <h4>הפורמט שלנו: [xmin, ymin, xmax, ymax] מנורמל</h4>
+            <ul>
+                <li><code>xmin</code> - הקצה השמאלי (ערך בין 0 ל-1)</li>
+                <li><code>ymin</code> - הקצה העליון (ערך בין 0 ל-1)</li>
+                <li><code>xmax</code> - הקצה הימני (ערך בין 0 ל-1)</li>
+                <li><code>ymax</code> - הקצה התחתון (ערך בין 0 ל-1)</li>
+            </ul>
+        </div>
+
+        <h3>למה מנרמלים?</h3>
+        <div class="analogy-box">
+            במקום להגיד "התפוח נמצא 100 פיקסלים מהשמאל", אנחנו אומרים 
+            "התפוח נמצא ב-15% מרוחב התמונה". ככה לא משנה מה גודל התמונה המקורי.
+        </div>
+
+        <h3>ההמרה:</h3>
+        <div class="code-block">
+# COCO format: [x, y, width, height] in pixels
+x, y, w, h = 100, 150, 200, 180
+img_width, img_height = 640, 480
+
+# Our format: [xmin, ymin, xmax, ymax] normalized to 0-1
+xmin = x / img_width              # 100 / 640 = 0.156
+ymin = y / img_height             # 150 / 480 = 0.312
+xmax = (x + w) / img_width        # 300 / 640 = 0.469
+ymax = (y + h) / img_height       # 330 / 480 = 0.688
+        </div>
+
+        <h3>מה הפונקציה <code>load_coco_dataset</code> עושה?</h3>
+        
+        <ol>
+            <li><strong>קוראת את קובץ ה-JSON</strong> לתוך מילון Python</li>
+            <li><strong>בונה "מילוני חיפוש"</strong> - כדי למצוא מהר תמונה לפי ה-ID שלה</li>
+            <li><strong>עוברת על כל אנוטציה</strong> ומחלצת:
+                <ul>
+                    <li>נתיב התמונה (מה-images)</li>
+                    <li>הקלאס (מה-categories)</li>
+                    <li>ה-Bounding Box (מומר ומנורמל)</li>
+                </ul>
+            </li>
+            <li><strong>מחזירה</strong> שלוש רשימות: נתיבים, תוויות, bboxes</li>
+        </ol>
+
+        <!-- Part 4: tf.data.Dataset -->
+        <h2 id="part4">🔄 חלק 4: יצירת tf.data.Dataset</h2>
+
+        <div class="step-card">
+            <h3>מה המטרה?</h3>
+            <p>להפוך את הרשימות שיצרנו (נתיבים, תוויות, bboxes) לפורמט שקרס יודע לעבוד איתו לאימון.</p>
+        </div>
+
+        <h3>למה צריך tf.data.Dataset?</h3>
+
+        <div class="analogy-box">
+            תחשבו על <code>tf.data.Dataset</code> כמו <strong>פס ייצור במפעל</strong>.
+            במקום להביא את כל החומרים בבת אחת (שזה יכול לפוצץ את הזיכרון),
+            הפס מביא חומרים בזרימה - קצת בכל פעם, בדיוק כמה שצריך.
+        </div>
+
+        <h4>היתרונות:</h4>
+        <ul>
+            <li>✅ <strong>חיסכון בזיכרון</strong> - לא טוענים את כל התמונות לזיכרון בבת אחת</li>
+            <li>✅ <strong>יעילות</strong> - טעינה ועיבוד מקבילי</li>
+            <li>✅ <strong>Batching אוטומטי</strong> - מחלק את הנתונים לקבוצות</li>
+            <li>✅ <strong>Shuffling</strong> - ערבוב הנתונים בכל epoch</li>
+        </ul>
+
+        <h3>מה הפונקציה <code>create_tf_dataset</code> עושה?</h3>
+
+        <div class="flow-diagram">
+            <div class="box"><strong>רשימות</strong><br>נתיבים, תוויות, bboxes</div>
+            <div class="arrow">⬇️ from_tensor_slices</div>
+            <div class="box"><strong>Dataset גולמי</strong><br>כל פריט = (נתיב, תווית, bbox)</div>
+            <div class="arrow">⬇️ map (load_and_preprocess)</div>
+            <div class="box"><strong>Dataset מעובד</strong><br>כל פריט = (תמונה, (one_hot, bbox))</div>
+            <div class="arrow">⬇️ batch</div>
+            <div class="box"><strong>Dataset סופי</strong><br>קבוצות של 32 דוגמאות</div>
+        </div>
+
+        <h3>הפונקציה הפנימית <code>load_and_preprocess</code>:</h3>
+
+        <div class="line-by-line">
+            <div class="line">
+                <div class="code-part">img = tf.io.read_file(img_path)</div>
+                <div class="explain-part">קריאת הקובץ מהדיסק (בינארי)</div>
+            </div>
+            <div class="line">
+                <div class="code-part">img = tf.image.decode_jpeg(img, channels=3)</div>
+                <div class="explain-part">פענוח ה-JPEG לטנזור של פיקסלים (RGB)</div>
+            </div>
+            <div class="line">
+                <div class="code-part">img = tf.image.resize(img, [224, 224])</div>
+                <div class="explain-part">שינוי גודל לגודל שהמודל מצפה לו</div>
+            </div>
+            <div class="line">
+                <div class="code-part">img = img / 255.0</div>
+                <div class="explain-part">נרמול: מ-[0,255] ל-[0,1]</div>
+            </div>
+            <div class="line">
+                <div class="code-part">one_hot = tf.one_hot(label, NUM_CLASSES)</div>
+                <div class="explain-part">המרת תווית למספר לווקטור one-hot</div>
+            </div>
+        </div>
+
+        <h3>מה זה One-Hot Encoding?</h3>
+
+        <div class="concept-box">
+            <h4>המרת מספר קטגוריה לווקטור</h4>
+            <p>במקום להגיד "זה קלאס 1", אנחנו יוצרים וקטור שבו המקום ה-1 הוא 1 והשאר 0.</p>
+        </div>
+
+        <div class="code-block">
+# If we have 3 classes: apple(0), banana(1), orange(2)
+
+label = 0  →  [1, 0, 0]  (apple)
+label = 1  →  [0, 1, 0]  (banana)
+label = 2  →  [0, 0, 1]  (orange)
+        </div>
+
+        <p><strong>למה?</strong> כי שכבת ה-softmax בסוף המודל מוציאה וקטור של הסתברויות, 
+        ואנחנו רוצים להשוות אותו לווקטור one-hot עם loss function.</p>
+
+        <!-- Part 6: Model -->
+        <h2 id="part6">🧠 חלק 6: בניית המודל</h2>
+
+        <div class="step-card">
+            <h3>מה המטרה?</h3>
+            <p>לבנות מודל שמקבל תמונה ומוציא <strong>שני דברים</strong>: 
+            קלאס (סיווג) ומיקום (bounding box).</p>
+        </div>
+
+        <h3>הרעיון: Multi-Task Learning</h3>
+
+        <div class="analogy-box">
+            תחשבו על המודל כמו <strong>תלמיד שלומד שני מקצועות במקביל</strong>.
+            הוא קורא את אותו ספר (התמונה), אבל עונה על שתי שאלות שונות:
+            "מה יש בתמונה?" ו-"איפה זה נמצא?"
+        </div>
+
+        <h3>ארכיטקטורת המודל:</h3>
+
+        <div class="flow-diagram">
+            <div class="box"><strong>תמונה</strong><br>224×224×3</div>
+            <div class="arrow">⬇️</div>
+            <div class="box"><strong>MobileNetV2 (Backbone)</strong><br>חילוץ features מהתמונה<br><em>שכבות מאומנות מראש!</em></div>
+            <div class="arrow">⬇️</div>
+            <div class="box"><strong>Global Average Pooling</strong><br>דחיסה לווקטור</div>
+            <div class="arrow">⬇️</div>
+            <div class="box"><strong>Dense(256)</strong><br>שכבה משותפת</div>
+            <div class="arrow" style="display: flex; justify-content: center; gap: 50px;">
+                <span>⬇️ Classification</span>
+                <span>⬇️ Localization</span>
+            </div>
+            <div style="display: flex; justify-content: center; gap: 20px;">
+                <div class="box" style="background: #E8F5E9;"><strong>Dense(num_classes, softmax)</strong><br>הסתברות לכל קלאס</div>
+                <div class="box" style="background: #FFF3E0;"><strong>Dense(4, sigmoid)</strong><br>קואורדינטות bbox</div>
+            </div>
+        </div>
+
+        <h3>Transfer Learning - למה MobileNetV2?</h3>
+
+        <div class="concept-box">
+            <h4>Transfer Learning = "לעמוד על כתפי ענקים"</h4>
+            <p>
+                MobileNetV2 כבר אומן על מיליוני תמונות (ImageNet).
+                הוא כבר יודע לזהות קווים, צורות, טקסטורות, ועוד.
+                אנחנו לוקחים את הידע הזה ורק מוסיפים "ראש" חדש למשימה שלנו.
+            </p>
+        </div>
+
+        <div class="tip-box">
+            <strong>💡 בלי Transfer Learning</strong> היינו צריכים אלפי תמונות ושעות אימון.
+            <strong>עם Transfer Learning</strong> מספיקות 50-100 תמונות ודקות ספורות.
+        </div>
+
+        <h3>שתי פונקציות הפסד (Loss Functions):</h3>
+
+        <table class="summary-table">
+            <tr>
+                <th>משימה</th>
+                <th>Loss Function</th>
+                <th>למה?</th>
+            </tr>
+            <tr>
+                <td>Classification</td>
+                <td><code>categorical_crossentropy</code></td>
+                <td>מודד כמה הסתברויות החיזוי רחוקות מה-one-hot האמיתי</td>
+            </tr>
+            <tr>
+                <td>Bounding Box</td>
+                <td><code>mse</code> (Mean Squared Error)</td>
+                <td>מודד כמה הקואורדינטות רחוקות מהאמיתיות</td>
+            </tr>
+        </table>
+
+        <p>
+            <strong>ה-Total Loss</strong> הוא סכום של שני ה-losses. 
+            המודל מנסה למזער את שניהם במקביל.
+        </p>
+
+        <!-- Part 8: Gradio -->
+        <h2 id="part8">🖥️ חלק 8: אפליקציית Gradio</h2>
+
+        <div class="step-card">
+            <h3>מה המטרה?</h3>
+            <p>לעטוף את המודל בממשק משתמש נוח - העלאת תמונה ← תוצאה עם bbox מצויר.</p>
+        </div>
+
+        <h3>הזרימה בפונקציה <code>predict_and_draw</code>:</h3>
+
+        <ol>
+            <li><strong>קבלת תמונה</strong> מהמשתמש (numpy array)</li>
+            <li><strong>עיבוד מקדים:</strong>
+                <ul>
+                    <li>שינוי גודל ל-224×224</li>
+                    <li>נרמול ל-[0,1]</li>
+                    <li>הוספת מימד batch</li>
+                </ul>
+            </li>
+            <li><strong>הרצת המודל</strong> - מקבלים קלאס ו-bbox</li>
+            <li><strong>ציור bbox</strong> על התמונה המקורית</li>
+            <li><strong>החזרת התוצאה</strong> למשתמש</li>
+        </ol>
+
+        <h3>למה צריך להמיר קואורדינטות?</h3>
+
+        <p>המודל מחזיר bbox מנורמל (0-1), אבל כדי לצייר על התמונה צריך פיקסלים:</p>
+
+        <div class="code-block">
+# Model output: normalized [0-1]
+xmin, ymin, xmax, ymax = 0.15, 0.20, 0.85, 0.90
+
+# Original image size
+original_w, original_h = 800, 600
+
+# Convert to pixels
+x1 = int(xmin * original_w)  # 0.15 * 800 = 120
+y1 = int(ymin * original_h)  # 0.20 * 600 = 120
+x2 = int(xmax * original_w)  # 0.85 * 800 = 680
+y2 = int(ymax * original_h)  # 0.90 * 600 = 540
+
+# Now we can draw a rectangle from (120,120) to (680,540)
+        </div>
+
+        <!-- Debugging Tips -->
+        <h2 id="debugging">🔧 טיפים לפתרון בעיות</h2>
+
+        <div class="warning-box">
+            <strong>בעיה:</strong> "הקוד של Roboflow לא עובד"<br>
+            <strong>פתרון:</strong> וודאו שהתקנתם את הספרייה: <code>!pip install roboflow</code>
+        </div>
+
+        <div class="warning-box">
+            <strong>בעיה:</strong> "אין תמונות בתיקייה"<br>
+            <strong>פתרון:</strong> בדקו את הנתיב. הריצו <code>!ls {DATASET_PATH}</code> לראות מה יש שם.
+        </div>
+
+        <div class="warning-box">
+            <strong>בעיה:</strong> "המודל לא מתכנס"<br>
+            <strong>פתרון:</strong> בדקו שהתוויות נכונות. הציגו כמה דוגמאות עם bboxes לפני האימון.
+        </div>
+
+        <div class="warning-box">
+            <strong>בעיה:</strong> "ה-bbox מצויר במקום לא נכון"<br>
+            <strong>פתרון:</strong> וודאו שאתם ממירים מנורמל לפיקסלים נכון (כופלים ברוחב/גובה).
+        </div>
+
+        <div class="warning-box">
+            <strong>בעיה:</strong> "Gradio לא עובד"<br>
+            <strong>פתרון:</strong> וודאו שהפונקציה מחזירה numpy array ולא tensor.
+        </div>
+
+        <!-- Summary -->
+        <h2>📝 סיכום</h2>
+
+        <table class="summary-table">
+            <tr>
+                <th>חלק</th>
+                <th>מה עושים</th>
+                <th>התוצאה</th>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>מורידים נתונים מ-Roboflow</td>
+                <td>תיקייה עם תמונות + JSON</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>קוראים את ה-COCO JSON</td>
+                <td>רשימות של נתיבים, תוויות, bboxes</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td>יוצרים tf.data.Dataset</td>
+                <td>נתונים מוכנים לאימון</td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td>בונים מודל Multi-Task</td>
+                <td>מודל עם שני ראשים</td>
+            </tr>
+            <tr>
+                <td>7</td>
+                <td>מאמנים ומעריכים</td>
+                <td>מודל מאומן + מדדים</td>
+            </tr>
+            <tr>
+                <td>8</td>
+                <td>עוטפים ב-Gradio</td>
+                <td>אפליקציה עובדת!</td>
+            </tr>
+        </table>
+
+        <div class="encouragement" style="margin-top: 40px;">
+            <h2>🎉 אתם יכולים!</h2>
+            <p>
+                כל שלב בפני עצמו הוא פשוט.<br>
+                אם משהו לא ברור - שאלו!<br>
+                בהצלחה בפרויקט! 🚀
+            </p>
+        </div>
+
+        <div class="footer">
+            מדריך מלווה לפרויקט Localization | למידת מכונה י"ב | תשפ"ו
+        </div>
+    </div>
+</body>
+</html>
