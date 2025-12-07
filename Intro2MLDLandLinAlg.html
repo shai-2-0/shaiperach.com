@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>סיכום מפגש 2 - מבוא ל-ML/DL ויסודות אלגברה ליניארית</title>
+    <!-- React for the interactive app -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #2c5282;
+            --secondary-color: #4299e1;
+            --accent-color: #ed8936;
+            --bg-light: #f7fafc;
+            --bg-white: #ffffff;
+            --text-dark: #2d3748;
+            --text-gray: #4a5568;
+            --border-color: #e2e8f0;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.9;
+            color: var(--text-dark);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 950px;
+            margin: 0 auto;
+            background: var(--bg-white);
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #1a365d 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        header h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        header .subtitle {
+            font-size: 1.2em;
+            opacity: 0.95;
+            margin-bottom: 5px;
+        }
+        
+        header .meta {
+            margin-top: 20px;
+            font-size: 0.95em;
+            opacity: 0.85;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .part-header {
+            background: linear-gradient(90deg, var(--secondary-color), var(--primary-color));
+            color: white;
+            padding: 20px 30px;
+            margin: 30px -40px;
+            font-size: 1.4em;
+            font-weight: bold;
+        }
+        
+        .section {
+            margin: 30px 0;
+            padding: 25px;
+            background: var(--bg-light);
+            border-radius: 12px;
+            border-right: 5px solid var(--secondary-color);
+        }
+        
+        .section h3 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        .subsection {
+            margin: 20px 0;
+            padding: 15px 20px;
+            background: var(--bg-white);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .subsection h4 {
+            color: var(--text-gray);
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        .definition {
+            background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+            border: 2px solid #0284c7;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .definition h4 {
+            color: #0369a1;
+            margin-bottom: 10px;
+        }
+        
+        .theorem {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border: 2px solid var(--accent-color);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .theorem h4 {
+            color: #92400e;
+            margin-bottom: 10px;
+        }
+        
+        .example {
+            background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+            border: 2px solid #16a34a;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .example h4 {
+            color: #166534;
+            margin-bottom: 10px;
+        }
+        
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: var(--bg-white);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .comparison-table th {
+            background: var(--primary-color);
+            color: white;
+            padding: 15px;
+            text-align: right;
+        }
+        
+        .comparison-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .comparison-table tr:nth-child(even) {
+            background: var(--bg-light);
+        }
+        
+        .highlight-box {
+            background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            border-right: 4px solid #6366f1;
+        }
+        
+        ul, ol {
+            margin: 15px 0;
+            padding-right: 25px;
+        }
+        
+        li {
+            margin: 8px 0;
+        }
+        
+        .interactive-link {
+            display: block;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            text-decoration: none;
+            padding: 18px 25px;
+            border-radius: 12px;
+            margin: 15px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+        
+        .interactive-link:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+        }
+        
+        .interactive-link .link-title {
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+        
+        .interactive-link .link-desc {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+        
+        .video-section {
+            background: linear-gradient(135deg, #1e1e1e 0%, #2d2d2d 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 25px 0;
+        }
+        
+        .video-section h4 {
+            color: #60a5fa;
+            margin-bottom: 15px;
+        }
+        
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            margin-top: 15px;
+            border-radius: 8px;
+        }
+        
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 8px;
+        }
+        
+        .formula {
+            font-family: 'Cambria Math', 'Times New Roman', serif;
+            background: #f8f9fa;
+            padding: 15px 20px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1.2em;
+            margin: 15px 0;
+            direction: ltr;
+        }
+        
+        .formula-inline {
+            font-family: 'Cambria Math', 'Times New Roman', serif;
+            direction: ltr;
+            display: inline;
+        }
+        
+        .summary-box {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            border: 2px solid var(--secondary-color);
+            border-radius: 12px;
+            padding: 25px;
+            margin: 30px 0;
+        }
+        
+        .summary-box h4 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+        
+        .homework {
+            background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%);
+            border: 2px solid #ec4899;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 30px 0;
+        }
+        
+        .homework h4 {
+            color: #be185d;
+            margin-bottom: 15px;
+        }
+        
+        footer {
+            background: var(--text-dark);
+            color: white;
+            text-align: center;
+            padding: 25px;
+            font-size: 0.9em;
+        }
+        
+        .hierarchy {
+            background: var(--bg-white);
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+        
+        .hierarchy-item {
+            padding: 10px 15px;
+            margin: 5px 0;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+        
+        .hierarchy-item.level-1 {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        
+        .hierarchy-item.level-2 {
+            background: #dcfce7;
+            color: #166534;
+            margin-right: 30px;
+        }
+        
+        .hierarchy-item.level-3 {
+            background: #fef3c7;
+            color: #92400e;
+            margin-right: 60px;
+        }
+        
+        .hierarchy-item.level-4 {
+            background: #fce7f3;
+            color: #be185d;
+            margin-right: 90px;
+        }
+        
+        .toc {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .toc h4 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+        
+        .toc ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .toc li {
+            padding: 5px 0;
+        }
+        
+        .toc a {
+            color: var(--text-gray);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        .toc a:hover {
+            color: var(--primary-color);
+        }
+        
+        /* Interactive app container */
+        .interactive-app-container {
+            background: var(--bg-white);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        @media (max-width: 768px) {
+            .content {
+                padding: 20px;
+            }
+            
+            .part-header {
+                margin: 20px -20px;
+                padding: 15px 20px;
+                font-size: 1.2em;
+            }
+            
+            header h1 {
+                font-size: 1.6em;
+            }
+            
+            .hierarchy-item.level-2,
+            .hierarchy-item.level-3,
+            .hierarchy-item.level-4 {
+                margin-right: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎓 מפגש 2 - רענון דיסציפלינרי</h1>
+            <div class="subtitle">מבוא ל-Machine Learning / Deep Learning ויסודות אלגברה ליניארית</div>
+            <div class="meta">
+                📅 נובמבר 2025 &nbsp;|&nbsp; 👨‍🏫 ד"ר שי פרח
+            </div>
+        </header>
+        
+        <div class="content">
+            
+            <div class="toc">
+                <h4>📋 תוכן עניינים</h4>
+                <ul>
+                    <li>🔹 <a href="#part-a">חלק א': מבוא ל-ML/DL</a></li>
+                    <li>🔹 <a href="#part-b">חלק ב': יסודות אלגברה ליניארית</a></li>
+                    <li>🔹 <a href="#transformations">טרנספורמציות ליניאריות</a></li>
+                    <li>🔹 <a href="#tools">כלי אינטראקטיבי</a></li>
+                    <li>🔹 <a href="#video">סרטון 3Blue1Brown</a></li>
+                    <li>🔹 <a href="#summary">סיכום ומטלות</a></li>
+                </ul>
+            </div>
+            
+            <!-- ========== חלק א': מבוא ל-ML/DL ========== -->
+            <div class="part-header" id="part-a">
+                חלק א': מבוא ל-Machine Learning ו-Deep Learning
+            </div>
+            
+            <section class="section">
+                <h3>🔍 מושגי יסוד: AI, ML, Deep Learning</h3>
+                
+                <p>
+                    שלושת המושגים המרכזיים בתחום - <strong>בינה מלאכותית (AI)</strong>, <strong>למידת מכונה (ML)</strong>, 
+                    ו-<strong>למידה עמוקה (Deep Learning)</strong> - מתארים גישות שונות להשגת "התנהגות אינטליגנטית" במערכות ממוחשבות.
+                </p>
+                
+                <div class="theorem">
+                    <h4>💡 עיקרון מרכזי: ההבדל הוא ב"איך", לא ב"מה"</h4>
+                    <p>
+                        ההבדלים בין שלושת התחומים אינם בתוצאה הסופית שאנו מנסים להשיג, 
+                        אלא <strong>באופן שבו המערכת לומדת ומגיעה לתוצאה</strong>.
+                    </p>
+                </div>
+                
+                <div class="subsection">
+                    <h4>🤖 בינה מלאכותית קלאסית: Expert Systems</h4>
+                    <p>
+                        בגישה הקלאסית (שנות ה-50 עד ה-80), פותחו <strong>מערכות מומחה</strong> (Expert Systems). 
+                        הרעיון היה לרכז ידע מומחים אנושיים ולתרגמו לכללים לוגיים מפורשים.
+                    </p>
+                    <p>
+                        <strong>התהליך:</strong> ראיון מומחים ← מיפוי דרכי חשיבה ← תרגום לכללי if-then-else
+                    </p>
+                    <p>
+                        <strong>המגבלה:</strong> קשה עד בלתי אפשרי לכסות את כל המקרים, והמערכות היו שבירות מול מצבים חדשים.
+                    </p>
+                </div>
+                
+                <div class="subsection">
+                    <h4>📊 למידת מכונה (Machine Learning)</h4>
+                    <p>
+                        החל משנות ה-80, התפתחה גישה חדשה: במקום ללמד את המכונה <em>מה</em> אנחנו יודעים, 
+                        אנחנו מלמדים אותה <em>ללמוד</em> מנתונים.
+                    </p>
+                    <div class="definition">
+                        <h4>📚 הגדרה: למידת מכונה</h4>
+                        <p>
+                            למידת מכונה היא תת-תחום של בינה מלאכותית שבו אלגוריתמים לומדים דפוסים מנתונים 
+                            ומשפרים את ביצועיהם עם הזמן, ללא תכנות מפורש של כל מקרה.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="subsection">
+                    <h4>🧠 למידה עמוקה (Deep Learning)</h4>
+                    <p>
+                        למידה עמוקה משתמשת ב<strong>רשתות נוירונים מלאכותיות</strong> בעלות שכבות רבות, 
+                        בהשראת המבנה של המוח האנושי. ההבדל בביצועים לעומת ML קלאסי הוא בסדרי גודל.
+                    </p>
+                    <p>
+                        <strong>ההבדל המהותי:</strong> ב-Deep Learning, הרשת מפתחת באופן עצמאי את הייצוג הפנימי של הנתונים. 
+                        היא "מחליטה" לבד אילו מאפיינים (features) רלוונטיים לפתרון הבעיה.
+                    </p>
+                </div>
+                
+                <div class="subsection">
+                    <h4>🚀 מודלים יסודיים (Foundational Models)</h4>
+                    <p>
+                        החל מ-2020, אנו עדים לעליית <strong>מודלים יסודיים</strong> - מודלים ענקיים (כגון GPT, Claude) 
+                        המאומנים על כמויות עצומות של נתונים ומסוגלים לבצע מגוון רחב של משימות.
+                    </p>
+                </div>
+                
+                <div class="hierarchy">
+                    <div class="hierarchy-item level-1">בינה מלאכותית (AI) - התחום הכללי</div>
+                    <div class="hierarchy-item level-2">← למידת מכונה (ML) - תת-תחום של AI</div>
+                    <div class="hierarchy-item level-3">← למידה עמוקה (Deep Learning) - תת-תחום של ML</div>
+                    <div class="hierarchy-item level-4">← Foundational Models - מודלים גדולים של DL</div>
+                </div>
+            </section>
+            
+            <section class="section">
+                <h3>📊 Structured Data לעומת Unstructured Data</h3>
+                
+                <table class="comparison-table">
+                    <tr>
+                        <th>Structured Data</th>
+                        <th>Unstructured Data</th>
+                    </tr>
+                    <tr>
+                        <td>מידע טבלאי - עמודות ושורות</td>
+                        <td>מידע שאינו מאורגן בטבלה</td>
+                    </tr>
+                    <tr>
+                        <td>ML קלאסי מצליח מאוד</td>
+                        <td>ML קלאסי מתקשה</td>
+                    </tr>
+                    <tr>
+                        <td>דוגמאות: נתוני לקוחות, מכירות, מדידות</td>
+                        <td>דוגמאות: תמונות, טקסט, קול, וידאו</td>
+                    </tr>
+                </table>
+                
+                <div class="highlight-box">
+                    <strong>יתרון Deep Learning:</strong> 
+                    למידה עמוקה מצליחה לעבוד גם עם Unstructured Data, 
+                    מה שפתח אפשרויות חדשות בזיהוי תמונות, עיבוד שפה טבעית, ועוד.
+                </div>
+            </section>
+            
+            <section class="section">
+                <h3>🌸 דוגמת Iris ו-Feature Extraction</h3>
+                
+                <p>
+                    דאטא-סט <strong>Iris</strong> הוא אחד הדאטא-סטים הקלאסיים ביותר ב-ML. 
+                    הוא כולל 150 פרחים משלושה זנים, כאשר לכל פרח נמדדו ארבעה מאפיינים.
+                </p>
+                
+                <div class="example">
+                    <h4>📌 דוגמה: הפיכת פרח לנתונים</h4>
+                    <p>כל פרח מיוצג על ידי וקטור של 4 מספרים:</p>
+                    <ul>
+                        <li>Sepal Length (אורך עלה הגביע)</li>
+                        <li>Sepal Width (רוחב עלה הגביע)</li>
+                        <li>Petal Length (אורך עלה הכותרת)</li>
+                        <li>Petal Width (רוחב עלה הכותרת)</li>
+                    </ul>
+                    <p>
+                        <strong>התוצאה:</strong> יצרנו Structured Data - טבלה עם 150 שורות ו-4 עמודות.
+                    </p>
+                </div>
+                
+                <div class="definition">
+                    <h4>📚 הגדרה: Feature Extraction</h4>
+                    <p>
+                        <strong>חילוץ מאפיינים</strong> (Feature Extraction) הוא תהליך שבו אנו בוחרים או יוצרים 
+                        את המשתנים (features) שישמשו את המודל ללמידה.
+                    </p>
+                    <ul>
+                        <li><strong>ב-ML קלאסי:</strong> מומחה אנושי מחליט אילו מאפיינים רלוונטיים</li>
+                        <li><strong>ב-Deep Learning:</strong> הרשת לומדת לבד אילו מאפיינים לחלץ</li>
+                    </ul>
+                </div>
+            </section>
+            
+            <section class="section">
+                <h3>🎯 Embedding: שיבוץ דוגמאות במרחב</h3>
+                
+                <div class="definition">
+                    <h4>📚 הגדרה: Embedding</h4>
+                    <p>
+                        <strong>Embedding</strong> (שיבוץ) הוא תהליך המרה של אובייקטים (טקסט, תמונות, פרחים...) 
+                        לוקטורים במרחב רב-ממדי, כך שאובייקטים "דומים" יהיו קרובים זה לזה במרחב.
+                    </p>
+                </div>
+                
+                <p>
+                    כאשר אנו משבצים את 150 פרחי ה-Iris במרחב 4-ממדי (לפי 4 המאפיינים), 
+                    מתגלה תופעה מעניינת: פרחים מאותו זן מתקבצים יחד!
+                </p>
+                
+                <div class="highlight-box">
+                    <strong>התובנה המרכזית:</strong> 
+                    ברגע שהפכנו את הדוגמאות לנקודות במרחב, בעיית הסיווג הפכה ל<strong>בעיה גיאומטרית</strong>: 
+                    עלינו למצוא גבולות (boundaries) שמפרידים בין האזורים השונים.
+                </div>
+            </section>
+            
+            <!-- ========== חלק ב': אלגברה ליניארית ========== -->
+            <div class="part-header" id="part-b">
+                חלק ב': יסודות אלגברה ליניארית
+            </div>
+            
+            <section class="section">
+                <h3>📐 וקטורים</h3>
+                
+                <div class="definition">
+                    <h4>📚 הגדרה: וקטור</h4>
+                    <p>
+                        <strong>וקטור</strong> הוא רשימה סדורה של מספרים. וקטור ב-<span class="formula-inline">ℝⁿ</span> 
+                        מכיל <span class="formula-inline">n</span> מספרים ממשיים.
+                    </p>
+                    <div class="formula">v = (v₁, v₂, ..., vₙ) ∈ ℝⁿ</div>
+                </div>
+                
+                <p>
+                    <strong>פרשנויות שונות של וקטור:</strong>
+                </p>
+                <ul>
+                    <li><strong>בפיזיקה:</strong> גודל וכיוון (כוח, מהירות)</li>
+                    <li><strong>במתמטיקה:</strong> נקודה במרחב או חץ מהראשית</li>
+                    <li><strong>ב-ML:</strong> ייצוג של דוגמה (כל רכיב = מאפיין)</li>
+                </ul>
+                
+                <div class="subsection">
+                    <h4>וקטורי הבסיס הסטנדרטי</h4>
+                    <p>במישור (<span class="formula-inline">ℝ²</span>), וקטורי היחידה הסטנדרטיים הם:</p>
+                    <div class="formula">î = (1, 0)  ,  ĵ = (0, 1)</div>
+                    <p>כל וקטור במישור ניתן לכתוב כקומבינציה ליניארית שלהם:</p>
+                    <div class="formula">v = (a, b) = a·î + b·ĵ</div>
+                </div>
+            </section>
+            
+            <section class="section">
+                <h3>⚙️ פעולות על וקטורים</h3>
+                
+                <div class="subsection">
+                    <h4>חיבור וקטורים</h4>
+                    <p>חיבור מתבצע רכיב-רכיב:</p>
+                    <div class="formula">u + v = (u₁ + v₁, u₂ + v₂, ..., uₙ + vₙ)</div>
+                    <p><strong>פרשנות גיאומטרית:</strong> שמים את זנב הוקטור השני בראש הראשון.</p>
+                </div>
+                
+                <div class="subsection">
+                    <h4>כפל בסקלר</h4>
+                    <p>כפל סקלר מכפיל כל רכיב:</p>
+                    <div class="formula">c·v = (c·v₁, c·v₂, ..., c·vₙ)</div>
+                    <p><strong>פרשנות גיאומטרית:</strong> מאריך או מקצר את הוקטור (וייתכן היפוך כיוון אם <span class="formula-inline">c < 0</span>).</p>
+                </div>
+                
+                <div class="definition">
+                    <h4>📚 הגדרה: קומבינציה ליניארית</h4>
+                    <p>
+                        <strong>קומבינציה ליניארית</strong> של וקטורים <span class="formula-inline">v₁, v₂, ..., vₖ</span> 
+                        עם סקלרים <span class="formula-inline">c₁, c₂, ..., cₖ</span> היא:
+                    </p>
+                    <div class="formula">c₁v₁ + c₂v₂ + ... + cₖvₖ</div>
+                </div>
+                
+                <div class="subsection">
+                    <h4>מכפלה סקלרית (Dot Product)</h4>
+                    <div class="formula">u · v = u₁v₁ + u₂v₂ + ... + uₙvₙ</div>
+                    <p><strong>תכונות חשובות:</strong></p>
+                    <ul>
+                        <li>התוצאה היא <strong>סקלר</strong> (מספר), לא וקטור</li>
+                        <li>אם <span class="formula-inline">u · v = 0</span>, הוקטורים מאונכים</li>
+                        <li><span class="formula-inline">v · v = ||v||²</span> (ריבוע האורך)</li>
+                    </ul>
+                </div>
+            </section>
+            
+            <section class="section">
+                <h3>📏 נורמות (Norms)</h3>
+                
+                <div class="definition">
+                    <h4>📚 הגדרה: נורמה</h4>
+                    <p>
+                        <strong>נורמה</strong> היא פונקציה המודדת את "גודל" או "אורך" וקטור.
+                    </p>
+                </div>
+                
+                <table class="comparison-table">
+                    <tr>
+                        <th>L² Norm (אוקלידית)</th>
+                        <th>L¹ Norm (מנהטן)</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="formula">||v||₂ = √(v₁² + v₂² + ... + vₙ²)</div>
+                        </td>
+                        <td>
+                            <div class="formula">||v||₁ = |v₁| + |v₂| + ... + |vₙ|</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>המרחק "בקו ישר" (משפט פיתגורס)</td>
+                        <td>סכום המרחקים לאורך הצירים</td>
+                    </tr>
+                    <tr>
+                        <td>הנפוצה ביותר</td>
+                        <td>שימושית ב-Regularization</td>
+                    </tr>
+                </table>
+                
+                <div class="theorem">
+                    <h4>💡 תכונה: L¹ ≥ L²</h4>
+                    <p>
+                        לכל וקטור, מתקיים <span class="formula-inline">||v||₁ ≥ ||v||₂</span>, 
+                        כאשר שוויון מתקיים רק אם לכל היותר רכיב אחד שונה מאפס.
+                    </p>
+                </div>
+            </section>
+            
+            <section class="section">
+                <h3>📊 מטריצות וטנזורים</h3>
+                
+                <div class="definition">
+                    <h4>📚 הגדרה: מטריצה</h4>
+                    <p>
+                        <strong>מטריצה</strong> היא מערך דו-ממדי של מספרים. 
+                        מטריצה <span class="formula-inline">m × n</span> מכילה <span class="formula-inline">m</span> שורות 
+                        ו-<span class="formula-inline">n</span> עמודות.
+                    </p>
+                </div>
+                
+                <div class="definition">
+                    <h4>📚 הגדרה: טנזור</h4>
+                    <p>
+                        <strong>טנזור</strong> הוא הכללה של וקטורים ומטריצות למערכים רב-ממדיים:
+                    </p>
+                    <ul>
+                        <li>טנזור מסדר 0: סקלר (מספר בודד)</li>
+                        <li>טנזור מסדר 1: וקטור (מערך חד-ממדי)</li>
+                        <li>טנזור מסדר 2: מטריצה (מערך דו-ממדי)</li>
+                        <li>טנזור מסדר 3 ומעלה: מערך רב-ממדי</li>
+                    </ul>
+                </div>
+                
+                <div class="example">
+                    <h4>📌 דוגמה: תמונה כטנזור</h4>
+                    <p>
+                        תמונה צבעונית בגודל 256×256 פיקסלים היא טנזור מסדר 3 בגודל 256×256×3 
+                        (גובה × רוחב × ערוצי צבע RGB).
+                    </p>
+                </div>
+                
+                <div class="highlight-box">
+                    <strong>למה TensorFlow?</strong> 
+                    ב-Deep Learning, כל הנתונים מיוצגים כטנזורים: הקלט, הפלט, ומשקלי הרשת.
+                </div>
+            </section>
+            
+            <!-- ========== טרנספורמציות ליניאריות ========== -->
+            <section class="section" id="transformations">
+                <h3>🔄 טרנספורמציות ליניאריות</h3>
+                
+                <div class="definition">
+                    <h4>📚 הגדרה: טרנספורמציה ליניארית (אלגברית)</h4>
+                    <p>
+                        פונקציה <span class="formula-inline">T: ℝⁿ → ℝᵐ</span> היא <strong>טרנספורמציה ליניארית</strong> 
+                        אם ורק אם היא מקיימת את שני התנאים הבאים לכל וקטורים <span class="formula-inline">u, v</span> 
+                        ולכל סקלר <span class="formula-inline">c</span>:
+                    </p>
+                    <div class="formula">
+                        1. אדיטיביות: T(u + v) = T(u) + T(v)
+                    </div>
+                    <div class="formula">
+                        2. הומוגניות: T(c·u) = c·T(u)
+                    </div>
+                </div>
+                
+                <div class="theorem">
+                    <h4>💡 משפט: תנאי שקול</h4>
+                    <p>
+                        שני התנאים לעיל שקולים לתנאי יחיד:
+                    </p>
+                    <div class="formula">T(au + bv) = a·T(u) + b·T(v)</div>
+                    <p>
+                        כלומר, טרנספורמציה ליניארית משמרת קומבינציות ליניאריות.
+                    </p>
+                </div>
+                
+                <div class="subsection">
+                    <h4>הפרשנות הגיאומטרית</h4>
+                    <p>
+                        טרנספורמציה ליניארית היא פעולה על המרחב שמקיימת:
+                    </p>
+                    <ul>
+                        <li><strong>הראשית נשארת במקום:</strong> <span class="formula-inline">T(0) = 0</span></li>
+                        <li><strong>קווים נשארים קווים:</strong> קו ישר נשאר קו ישר לאחר הטרנספורמציה</li>
+                        <li><strong>מרווחים שווים נשמרים:</strong> נקודות במרחקים שווים על קו יישארו במרחקים שווים</li>
+                    </ul>
+                    <p>
+                        דוגמאות: סיבוב, שיקוף, מתיחה/כיווץ, הטיה (shear).
+                    </p>
+                </div>
+            </section>
+            
+            <section class="section">
+                <h3>🔗 הקשר בין מטריצות לטרנספורמציות ליניאריות</h3>
+                
+                <div class="theorem">
+                    <h4>💡 משפט מרכזי</h4>
+                    <p>
+                        קיים התאמה חד-חד-ערכית בין <strong>מטריצות</strong> לבין <strong>טרנספורמציות ליניאריות</strong>:
+                    </p>
+                    <ul>
+                        <li>כל מטריצה <span class="formula-inline">m × n</span> מגדירה טרנספורמציה ליניארית <span class="formula-inline">T: ℝⁿ → ℝᵐ</span></li>
+                        <li>כל טרנספורמציה ליניארית <span class="formula-inline">T: ℝⁿ → ℝᵐ</span> ניתנת לייצוג על ידי מטריצה <span class="formula-inline">m × n</span></li>
+                    </ul>
+                </div>
+                
+                <div class="highlight-box">
+                    <strong>כיצד המטריצה נקבעת?</strong>
+                    <p>
+                        אם נדע לאן הולכים וקטורי הבסיס הסטנדרטי <span class="formula-inline">î</span> ו-<span class="formula-inline">ĵ</span> 
+                        תחת הטרנספורמציה, נוכל לבנות את המטריצה:
+                    </p>
+                    <div class="formula">
+                        A = [T(î) | T(ĵ)]
+                    </div>
+                    <p>
+                        כלומר, <strong>עמודות המטריצה הן התמונות של וקטורי הבסיס</strong>.
+                    </p>
+                </div>
+                
+                <div class="example">
+                    <h4>📌 דוגמה: סיבוב ב-90°</h4>
+                    <p>סיבוב נגד כיוון השעון ב-90°:</p>
+                    <ul>
+                        <li><span class="formula-inline">î = (1, 0)</span> הולך ל-<span class="formula-inline">(0, 1)</span></li>
+                        <li><span class="formula-inline">ĵ = (0, 1)</span> הולך ל-<span class="formula-inline">(-1, 0)</span></li>
+                    </ul>
+                    <div class="formula">
+                        A = [0  -1]<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;[1   0]
+                    </div>
+                </div>
+                
+                <div class="subsection">
+                    <h4>הכפלת מטריצה בוקטור</h4>
+                    <p>
+                        הכפלה של מטריצה <span class="formula-inline">A</span> בוקטור <span class="formula-inline">v</span> 
+                        שקולה להפעלת הטרנספורמציה על הוקטור:
+                    </p>
+                    <div class="formula">T(v) = A·v</div>
+                    <p>
+                        <strong>חישובית:</strong> כל רכיב בתוצאה הוא מכפלה סקלרית של שורה במטריצה עם וקטור הקלט.
+                    </p>
+                </div>
+                
+                <div class="summary-box">
+                    <h4>📝 לזכור</h4>
+                    <ul>
+                        <li>מטריצה <span class="formula-inline">m × n</span>: קלט מ-<span class="formula-inline">ℝⁿ</span>, פלט ב-<span class="formula-inline">ℝᵐ</span></li>
+                        <li>עמודות המטריצה = לאן הולכים וקטורי הבסיס</li>
+                        <li>כל טרנספורמציה ליניארית ↔ מטריצה יחידה</li>
+                    </ul>
+                </div>
+            </section>
+            
+            <!-- ========== כלי אינטראקטיבי ========== -->
+            <section class="section" id="tools">
+                <h3>🛠️ כלי אינטראקטיבי</h3>
+                
+                <p>הכלי הבא מאפשר לראות ויזואלית כיצד מטריצות שונות משפיעות על המישור. נסו לגרור את וקטורי הבסיס או לשנות את ערכי המטריצה ולראות כיצד הרשת משתנה:</p>
+                
+                <!-- Interactive React App -->
+                <div id="linear-transform-app" class="interactive-app-container"></div>
+                
+                <p style="margin-top: 20px;">
+                    <strong>תרגיל מומלץ:</strong> שנו את ערכי המטריצה וצפו כיצד הטרנספורמציה משתנה. 
+                    נסו ליצור סיבוב, שיקוף, מתיחה, והטיה. שימו לב שהטרנספורמציות מצטברות - לחיצה פעמיים על Rotate 90° תיתן סיבוב של 180°!
+                </p>
+            </section>
+            
+            <!-- ========== סרטון 3Blue1Brown ========== -->
+            <div class="video-section" id="video">
+                <h4>🎬 סדרת Essence of Linear Algebra</h4>
+                <p>
+                    סדרת הסרטונים של Grant Sanderson (3Blue1Brown) מציגה את האלגברה הליניארית 
+                    בגישה ויזואלית ואינטואיטיבית. הסרטון הבא מסביר את הקשר בין מטריצות לטרנספורמציות ליניאריות:
+                </p>
+                <div class="video-container">
+                    <iframe width="560" height="315" src="https://www.youtube.com/embed/XkY2DOUCWMU?si=-0nfMA5px-U8Nvu-" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                </div>
+                <p style="margin-top: 15px;">
+                    <strong>מומלץ:</strong> צפו בסדרה המלאה "Essence of Linear Algebra" ב-YouTube.
+                </p>
+            </div>
+            
+            <!-- ========== סיכום ומטלות ========== -->
+            <div class="summary-box" id="summary">
+                <h4>🎯 סיכום המפגש</h4>
+                <ul>
+                    <li>ההבדלים בין AI, ML, ו-Deep Learning נעוצים ב<strong>אופן הלמידה</strong></li>
+                    <li><strong>Embedding:</strong> הפיכת דוגמאות לנקודות במרחב, והפיכת בעיית הסיווג לבעיה גיאומטרית</li>
+                    <li><strong>וקטורים:</strong> ייצוג דוגמאות, פעולות בסיסיות, נורמות</li>
+                    <li><strong>מטריצות וטנזורים:</strong> מבני הנתונים הבסיסיים ב-Deep Learning</li>
+                    <li><strong>טרנספורמציות ליניאריות:</strong> הקשר ההדוק למטריצות - כל מטריצה היא טרנספורמציה וכל טרנספורמציה ליניארית ניתנת לייצוג במטריצה</li>
+                </ul>
+            </div>
+            
+            <div class="homework">
+                <h4>📚 מטלה לשבוע הבא</h4>
+                <ul>
+                    <li><strong>צפייה:</strong> סדרת סרטונים של 3Blue1Brown - "Essence of Linear Algebra"</li>
+                    <li><strong>תרגול:</strong> דפי תרגול על מכפלות וקטור-מטריצה</li>
+                    <li><strong>למידה:</strong> מחברת NumPy - שימוש באלגברה ליניארית בפייתון</li>
+                </ul>
+            </div>
+            
+        </div>
+        
+        <footer>
+            <p><strong>רענון דיסציפלינרי: למידת מכונה ולמידה עמוקה</strong></p>
+            <p>אוניברסיטת תל אביב | בית הספר לחינוך | החוג לחינוך מתמטי, מדעי וטכנולוגי</p>
+            <p>שנת הלימודים תשפ"ו (2025-2026) | ד"ר שי פרח</p>
+        </footer>
+    </div>
+
+    <!-- Linear Transformation App Script -->
+    <script type="text/babel">
+        const { useState, useRef, useEffect } = React;
+
+        const LinearTransformPlayground = () => {
+            const [iHat, setIHat] = useState({ x: 1, y: 0 });
+            const [jHat, setJHat] = useState({ x: 0, y: 1 });
+            const [vecX, setVecX] = useState(1.5);
+            const [vecY, setVecY] = useState(1);
+            const [dragging, setDragging] = useState(null);
+            
+            const canvasRef = useRef(null);
+            const SCALE = 50;
+            const CENTER = 200;
+            
+            const colors = {
+                primary: '#2c5282',
+                secondary: '#4299e1',
+                accent: '#ed8936',
+                bgLight: '#f7fafc',
+                bgWhite: '#ffffff',
+                textDark: '#2d3748',
+                textGray: '#4a5568',
+                border: '#e2e8f0',
+                iHatColor: '#4299e1',
+                iHatDark: '#2c5282',
+                jHatColor: '#ed8936',
+                jHatDark: '#c05621',
+                vectorColor: '#38a169',
+                vectorDark: '#276749',
+                gridLight: '#e2e8f0',
+                gridTransformed: '#cbd5e0',
+            };
+
+            const multiplyMatrix = (currentI, currentJ, newI, newJ) => {
+                return {
+                    newIHat: {
+                        x: currentI.x * newI.x + currentJ.x * newI.y,
+                        y: currentI.y * newI.x + currentJ.y * newI.y,
+                    },
+                    newJHat: {
+                        x: currentI.x * newJ.x + currentJ.x * newJ.y,
+                        y: currentI.y * newJ.x + currentJ.y * newJ.y,
+                    }
+                };
+            };
+
+            const applyTransform = (newI, newJ) => {
+                const result = multiplyMatrix(iHat, jHat, newI, newJ);
+                setIHat(result.newIHat);
+                setJHat(result.newJHat);
+            };
+
+            const resetTransform = () => {
+                setIHat({ x: 1, y: 0 });
+                setJHat({ x: 0, y: 1 });
+            };
+
+            const toCanvas = (x, y) => ({ x: CENTER + x * SCALE, y: CENTER - y * SCALE });
+            const toMath = (canvasX, canvasY) => ({ x: (canvasX - CENTER) / SCALE, y: (CENTER - canvasY) / SCALE });
+            const transform = (x, y) => ({ x: x * iHat.x + y * jHat.x, y: x * iHat.y + y * jHat.y });
+
+            const getMousePos = (e) => {
+                const canvas = canvasRef.current;
+                if (!canvas) return { x: 0, y: 0 };
+                const rect = canvas.getBoundingClientRect();
+                const scaleX = canvas.width / rect.width;
+                const scaleY = canvas.height / rect.height;
+                return { x: (e.clientX - rect.left) * scaleX, y: (e.clientY - rect.top) * scaleY };
+            };
+
+            const drawArrow = (ctx, from, to, color, lineWidth = 3) => {
+                ctx.strokeStyle = color;
+                ctx.lineWidth = lineWidth;
+                ctx.lineCap = 'round';
+                ctx.beginPath();
+                ctx.moveTo(from.x, from.y);
+                ctx.lineTo(to.x, to.y);
+                ctx.stroke();
+                
+                const dx = to.x - from.x;
+                const dy = to.y - from.y;
+                const len = Math.sqrt(dx * dx + dy * dy);
+                if (len < 1) return;
+                
+                const nx = dx / len;
+                const ny = dy / len;
+                const arrowSize = 8;
+                
+                ctx.beginPath();
+                ctx.moveTo(to.x, to.y);
+                ctx.lineTo(to.x - arrowSize * nx + arrowSize * 0.4 * ny, to.y - arrowSize * ny - arrowSize * 0.4 * nx);
+                ctx.moveTo(to.x, to.y);
+                ctx.lineTo(to.x - arrowSize * nx - arrowSize * 0.4 * ny, to.y - arrowSize * ny + arrowSize * 0.4 * nx);
+                ctx.stroke();
+            };
+
+            const draw = () => {
+                const canvas = canvasRef.current;
+                if (!canvas) return;
+                const ctx = canvas.getContext('2d');
+                
+                ctx.fillStyle = colors.bgWhite;
+                ctx.fillRect(0, 0, 400, 400);
+                
+                // Background grid
+                ctx.strokeStyle = colors.gridLight;
+                ctx.lineWidth = 0.5;
+                for (let i = -4; i <= 4; i++) {
+                    const p1 = toCanvas(-4, i); const p2 = toCanvas(4, i);
+                    ctx.beginPath(); ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.stroke();
+                    const p3 = toCanvas(i, -4); const p4 = toCanvas(i, 4);
+                    ctx.beginPath(); ctx.moveTo(p3.x, p3.y); ctx.lineTo(p4.x, p4.y); ctx.stroke();
+                }
+                
+                // Transformed grid
+                ctx.strokeStyle = colors.gridTransformed;
+                ctx.lineWidth = 1.5;
+                for (let i = -10; i <= 10; i++) {
+                    const h1 = transform(-10, i); const h2 = transform(10, i);
+                    const hp1 = toCanvas(h1.x, h1.y); const hp2 = toCanvas(h2.x, h2.y);
+                    ctx.beginPath(); ctx.moveTo(hp1.x, hp1.y); ctx.lineTo(hp2.x, hp2.y); ctx.stroke();
+                    const v1 = transform(i, -10); const v2 = transform(i, 10);
+                    const vp1 = toCanvas(v1.x, v1.y); const vp2 = toCanvas(v2.x, v2.y);
+                    ctx.beginPath(); ctx.moveTo(vp1.x, vp1.y); ctx.lineTo(vp2.x, vp2.y); ctx.stroke();
+                }
+                
+                // Axes
+                ctx.strokeStyle = colors.textDark;
+                ctx.lineWidth = 2;
+                const ax1 = transform(-10, 0); const ax2 = transform(10, 0);
+                ctx.beginPath(); ctx.moveTo(toCanvas(ax1.x, ax1.y).x, toCanvas(ax1.x, ax1.y).y);
+                ctx.lineTo(toCanvas(ax2.x, ax2.y).x, toCanvas(ax2.x, ax2.y).y); ctx.stroke();
+                const ay1 = transform(0, -10); const ay2 = transform(0, 10);
+                ctx.beginPath(); ctx.moveTo(toCanvas(ay1.x, ay1.y).x, toCanvas(ay1.x, ay1.y).y);
+                ctx.lineTo(toCanvas(ay2.x, ay2.y).x, toCanvas(ay2.x, ay2.y).y); ctx.stroke();
+                
+                // Transformed vector
+                const transformedVec = transform(vecX, vecY);
+                const vecEnd = toCanvas(transformedVec.x, transformedVec.y);
+                drawArrow(ctx, toCanvas(0, 0), vecEnd, colors.vectorColor, 3);
+                
+                // Basis vectors
+                const origin = toCanvas(0, 0);
+                const iHatEnd = toCanvas(iHat.x, iHat.y);
+                const jHatEnd = toCanvas(jHat.x, jHat.y);
+                drawArrow(ctx, origin, iHatEnd, colors.iHatColor, 3);
+                drawArrow(ctx, origin, jHatEnd, colors.jHatColor, 3);
+                
+                // Handles
+                ctx.fillStyle = '#fef3c7';
+                ctx.strokeStyle = colors.textGray;
+                ctx.lineWidth = 1.5;
+                ctx.beginPath(); ctx.arc(iHatEnd.x, iHatEnd.y, 7, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+                ctx.beginPath(); ctx.arc(jHatEnd.x, jHatEnd.y, 7, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+                
+                // Labels
+                ctx.font = 'bold 14px Arial';
+                ctx.fillStyle = colors.iHatDark;
+                ctx.fillText('î', iHatEnd.x + 10, iHatEnd.y + 4);
+                ctx.fillStyle = colors.jHatDark;
+                ctx.fillText('ĵ', jHatEnd.x + 10, jHatEnd.y + 4);
+            };
+
+            const handleMouseDown = (e) => {
+                const pos = getMousePos(e);
+                const iHatPos = toCanvas(iHat.x, iHat.y);
+                const jHatPos = toCanvas(jHat.x, jHat.y);
+                const distI = Math.sqrt((pos.x - iHatPos.x) ** 2 + (pos.y - iHatPos.y) ** 2);
+                const distJ = Math.sqrt((pos.x - jHatPos.x) ** 2 + (pos.y - jHatPos.y) ** 2);
+                if (distI < 12) { setDragging('iHat'); e.preventDefault(); }
+                else if (distJ < 12) { setDragging('jHat'); e.preventDefault(); }
+            };
+
+            const handleMouseMove = (e) => {
+                if (!dragging) return;
+                const pos = getMousePos(e);
+                const mathCoords = toMath(pos.x, pos.y);
+                const clampedX = Math.max(-4, Math.min(4, mathCoords.x));
+                const clampedY = Math.max(-4, Math.min(4, mathCoords.y));
+                const snappedX = Math.round(clampedX * 4) / 4;
+                const snappedY = Math.round(clampedY * 4) / 4;
+                if (dragging === 'iHat') setIHat({ x: snappedX, y: snappedY });
+                else if (dragging === 'jHat') setJHat({ x: snappedX, y: snappedY });
+            };
+
+            useEffect(() => { draw(); }, [iHat, jHat, vecX, vecY]);
+
+            useEffect(() => {
+                const handleGlobalMouseMove = (e) => { if (dragging) handleMouseMove(e); };
+                const handleGlobalMouseUp = () => setDragging(null);
+                window.addEventListener('mousemove', handleGlobalMouseMove);
+                window.addEventListener('mouseup', handleGlobalMouseUp);
+                return () => {
+                    window.removeEventListener('mousemove', handleGlobalMouseMove);
+                    window.removeEventListener('mouseup', handleGlobalMouseUp);
+                };
+            }, [dragging, iHat, jHat]);
+
+            const handleMatrixChange = (vector, component, value) => {
+                const numValue = parseFloat(value);
+                if (isNaN(numValue)) return;
+                const clampedValue = Math.max(-10, Math.min(10, numValue));
+                if (vector === 'iHat') setIHat(prev => ({ ...prev, [component]: clampedValue }));
+                else setJHat(prev => ({ ...prev, [component]: clampedValue }));
+            };
+
+            const presets = [
+                { name: 'Rotate 90°', iHat: { x: 0, y: 1 }, jHat: { x: -1, y: 0 } },
+                { name: 'Shear', iHat: { x: 1, y: 0 }, jHat: { x: 1, y: 1 } },
+                { name: 'Scale ×2', iHat: { x: 2, y: 0 }, jHat: { x: 0, y: 2 } },
+                { name: 'Reflect X', iHat: { x: -1, y: 0 }, jHat: { x: 0, y: 1 } },
+            ];
+
+            const transformedVec = transform(vecX, vecY);
+
+            const HandleIndicator = () => (
+                <span style={{ display: 'inline-block', width: '12px', height: '12px', backgroundColor: '#fef3c7', border: `1.5px solid ${colors.textGray}`, borderRadius: '50%', marginRight: '4px', marginLeft: '4px', verticalAlign: 'middle' }} />
+            );
+
+            const SliderIndicator = () => (
+                <span style={{ display: 'inline-flex', alignItems: 'center', marginRight: '4px', marginLeft: '4px', verticalAlign: 'middle' }}>
+                    <span style={{ width: '30px', height: '6px', backgroundColor: '#e2e8f0', borderRadius: '3px', display: 'inline-block', position: 'relative' }}>
+                        <span style={{ position: 'absolute', right: '8px', top: '-3px', width: '12px', height: '12px', backgroundColor: colors.secondary, borderRadius: '50%' }}/>
+                    </span>
+                </span>
+            );
+
+            const inputStyle = { width: '50px', textAlign: 'center', border: `1px solid ${colors.border}`, borderRadius: '4px', padding: '4px', fontSize: '14px', fontFamily: 'monospace' };
+            const buttonBaseStyle = { padding: '8px 12px', fontSize: '0.8em', backgroundColor: colors.bgLight, border: `1px solid ${colors.border}`, borderRadius: '6px', cursor: 'pointer', fontWeight: '500', color: colors.textDark, transition: 'all 0.2s' };
+
+            return (
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '20px', backgroundColor: colors.bgLight, borderRadius: '12px', fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif", direction: 'rtl' }}>
+                    <h4 style={{ fontSize: '1.2em', fontWeight: 'bold', marginBottom: '16px', color: colors.primary }}>
+                        טרנספורמציות ליניאריות - סביבת ניסוי
+                    </h4>
+                    
+                    <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap', justifyContent: 'center' }}>
+                        <canvas ref={canvasRef} width={400} height={400} style={{ border: `1px solid ${colors.border}`, borderRadius: '8px', backgroundColor: colors.bgWhite, cursor: dragging ? 'grabbing' : 'grab' }} onMouseDown={handleMouseDown} />
+                        
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', minWidth: '230px' }}>
+                            {/* Matrix */}
+                            <div style={{ backgroundColor: colors.bgWhite, padding: '16px', borderRadius: '8px', border: `1px solid ${colors.border}` }}>
+                                <div style={{ fontSize: '0.9em', fontWeight: '600', marginBottom: '12px', color: colors.textGray }}>מטריצת הטרנספורמציה:</div>
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px', direction: 'ltr' }}>
+                                    <div style={{ fontSize: '2em', color: colors.textGray, fontWeight: '300' }}>[</div>
+                                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+                                        <input type="number" step="0.1" value={iHat.x} onChange={(e) => handleMatrixChange('iHat', 'x', e.target.value)} style={{ ...inputStyle, color: colors.iHatDark }} />
+                                        <input type="number" step="0.1" value={iHat.y} onChange={(e) => handleMatrixChange('iHat', 'y', e.target.value)} style={{ ...inputStyle, color: colors.iHatDark }} />
+                                    </div>
+                                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', marginLeft: '8px' }}>
+                                        <input type="number" step="0.1" value={jHat.x} onChange={(e) => handleMatrixChange('jHat', 'x', e.target.value)} style={{ ...inputStyle, color: colors.jHatDark }} />
+                                        <input type="number" step="0.1" value={jHat.y} onChange={(e) => handleMatrixChange('jHat', 'y', e.target.value)} style={{ ...inputStyle, color: colors.jHatDark }} />
+                                    </div>
+                                    <div style={{ fontSize: '2em', color: colors.textGray, fontWeight: '300' }}>]</div>
+                                </div>
+                                <div style={{ fontSize: '0.75em', color: colors.textGray, marginTop: '8px', textAlign: 'center', direction: 'ltr' }}>
+                                    <span style={{ color: colors.iHatDark }}>î</span>{' · '}<span style={{ color: colors.jHatDark }}>ĵ</span>
+                                </div>
+                            </div>
+                            
+                            {/* Vector sliders */}
+                            <div style={{ backgroundColor: colors.bgWhite, padding: '16px', borderRadius: '8px', border: `1px solid ${colors.border}` }}>
+                                <div style={{ fontSize: '0.9em', fontWeight: '600', marginBottom: '12px', color: colors.textGray }}>וקטור הקלט:</div>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', direction: 'ltr' }}>
+                                        <span style={{ width: '24px', fontFamily: 'monospace' }}>x:</span>
+                                        <input type="range" min="-3" max="3" step="0.25" value={vecX} onChange={(e) => setVecX(parseFloat(e.target.value))} style={{ flex: 1, accentColor: colors.secondary }} />
+                                        <span style={{ width: '48px', fontFamily: 'monospace', textAlign: 'left' }}>{vecX.toFixed(2)}</span>
+                                    </div>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', direction: 'ltr' }}>
+                                        <span style={{ width: '24px', fontFamily: 'monospace' }}>y:</span>
+                                        <input type="range" min="-3" max="3" step="0.25" value={vecY} onChange={(e) => setVecY(parseFloat(e.target.value))} style={{ flex: 1, accentColor: colors.secondary }} />
+                                        <span style={{ width: '48px', fontFamily: 'monospace', textAlign: 'left' }}>{vecY.toFixed(2)}</span>
+                                    </div>
+                                </div>
+                                <div style={{ marginTop: '10px', fontSize: '0.85em', color: colors.vectorDark, fontFamily: 'monospace', direction: 'ltr', textAlign: 'center' }}>
+                                    v = {vecX.toFixed(1)}î + {vecY.toFixed(1)}ĵ
+                                </div>
+                                <div style={{ marginTop: '4px', fontSize: '0.85em', color: colors.textGray, fontFamily: 'monospace', direction: 'ltr', textAlign: 'center' }}>
+                                    T(v) = ({transformedVec.x.toFixed(2)}, {transformedVec.y.toFixed(2)})
+                                </div>
+                            </div>
+                            
+                            {/* Presets */}
+                            <div style={{ backgroundColor: colors.bgWhite, padding: '16px', borderRadius: '8px', border: `1px solid ${colors.border}` }}>
+                                <div style={{ fontSize: '0.9em', fontWeight: '600', marginBottom: '12px', color: colors.textGray }}>הפעל טרנספורמציה:</div>
+                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                                    <button onClick={resetTransform} style={{ ...buttonBaseStyle, backgroundColor: '#fee2e2', border: '1px solid #fca5a5', color: '#991b1b' }}
+                                        onMouseOver={(e) => { e.target.style.backgroundColor = '#ef4444'; e.target.style.color = 'white'; }}
+                                        onMouseOut={(e) => { e.target.style.backgroundColor = '#fee2e2'; e.target.style.color = '#991b1b'; }}>Reset</button>
+                                    {presets.map((preset, idx) => (
+                                        <button key={idx} onClick={() => applyTransform(preset.iHat, preset.jHat)} style={buttonBaseStyle}
+                                            onMouseOver={(e) => { e.target.style.backgroundColor = colors.secondary; e.target.style.color = 'white'; }}
+                                            onMouseOut={(e) => { e.target.style.backgroundColor = colors.bgLight; e.target.style.color = colors.textDark; }}>{preset.name}</button>
+                                    ))}
+                                </div>
+                            </div>
+                            
+                            {/* Instructions */}
+                            <div style={{ fontSize: '0.8em', color: colors.textGray, backgroundColor: '#e0f2fe', padding: '12px', borderRadius: '8px', border: '1px solid #bae6fd', lineHeight: '1.8' }}>
+                                <p style={{ marginBottom: '6px', display: 'flex', alignItems: 'center' }}><strong>גררו</strong>&nbsp;את העיגולים&nbsp;<HandleIndicator />&nbsp;לשינוי î ו-ĵ</p>
+                                <p style={{ marginBottom: '6px' }}><strong>ערכו</strong> את ערכי המטריצה ישירות</p>
+                                <p style={{ display: 'flex', alignItems: 'center' }}><strong>הסליידרים</strong>&nbsp;<SliderIndicator />&nbsp;שולטים בוקטור הקלט</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('linear-transform-app'));
+        root.render(<LinearTransformPlayground />);
+    </script>
+</body>
+</html>
