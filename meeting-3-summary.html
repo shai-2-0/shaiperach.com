@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>סיכום מפגש 3 | חדו״א רבת משתנים ללמידת מכונה</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&family=Frank+Ruhl+Libre:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1a365d;
+            --primary-light: #2c5282;
+            --accent: #c53030;
+            --accent-soft: #fc8181;
+            --bg: #faf9f7;
+            --bg-card: #ffffff;
+            --text: #2d3748;
+            --text-light: #4a5568;
+            --border: #e2e8f0;
+            --gradient-start: #1a365d;
+            --gradient-end: #2b4c7e;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Heebo', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.8;
+            font-size: 17px;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
+            color: white;
+            padding: 3rem 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            opacity: 0.5;
+        }
+
+        .header-content {
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .course-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.15);
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+            backdrop-filter: blur(10px);
+        }
+
+        header h1 {
+            font-family: 'Frank Ruhl Libre', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        .meta-info {
+            margin-top: 1.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            font-size: 0.9rem;
+            opacity: 0.85;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .meta-icon {
+            width: 18px;
+            height: 18px;
+            opacity: 0.8;
+        }
+
+        /* Main Content */
+        main {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        /* Intro Box */
+        .intro-box {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            border-right: 4px solid var(--accent);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+
+        .intro-box h2 {
+            font-family: 'Frank Ruhl Libre', serif;
+            color: var(--primary);
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+        }
+
+        .intro-box p {
+            color: var(--text-light);
+        }
+
+        /* Section Styling */
+        section {
+            margin-bottom: 3rem;
+        }
+
+        h2 {
+            font-family: 'Frank Ruhl Libre', serif;
+            font-size: 1.6rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        h2 .section-number {
+            background: var(--primary);
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Heebo', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        h3 {
+            font-size: 1.2rem;
+            color: var(--primary-light);
+            margin: 1.5rem 0 1rem;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 1rem;
+        }
+
+        /* Definition Box */
+        .definition {
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-right: 3px solid var(--primary);
+        }
+
+        .definition-title {
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            font-size: 1.05rem;
+        }
+
+        /* Math Box */
+        .math-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            text-align: center;
+            font-size: 1.1rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+        }
+
+        .math-box .formula {
+            font-family: 'Times New Roman', serif;
+            font-size: 1.3rem;
+            color: var(--primary);
+            margin: 0.5rem 0;
+            direction: ltr;
+        }
+
+        .math-box .explanation {
+            font-size: 0.95rem;
+            color: var(--text-light);
+            margin-top: 0.75rem;
+        }
+
+        /* Example Box */
+        .example {
+            background: #fffaf0;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border: 1px solid #fbd38d;
+        }
+
+        .example-title {
+            font-weight: 600;
+            color: #c05621;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .example-title::before {
+            content: '💡';
+        }
+
+        /* Key Point Box */
+        .key-point {
+            background: linear-gradient(135deg, #ebf8ff 0%, #e6fffa 100%);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-right: 3px solid #38b2ac;
+        }
+
+        .key-point-title {
+            font-weight: 700;
+            color: #234e52;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .key-point-title::before {
+            content: '🎯';
+        }
+
+        /* Analogy Box */
+        .analogy {
+            background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-right: 3px solid #805ad5;
+        }
+
+        .analogy-title {
+            font-weight: 600;
+            color: #553c9a;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .analogy-title::before {
+            content: '🔄';
+        }
+
+        /* Lists */
+        ul, ol {
+            margin: 1rem 0 1rem 1.5rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Emphasis */
+        strong {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        em {
+            color: var(--accent);
+            font-style: normal;
+            font-weight: 500;
+        }
+
+        /* Code/Term */
+        code {
+            background: #edf2f7;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+            direction: ltr;
+            display: inline-block;
+        }
+
+        /* Summary Box */
+        .summary-box {
+            background: var(--primary);
+            color: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+
+        .summary-box h3 {
+            color: white;
+            margin-top: 0;
+            font-size: 1.3rem;
+        }
+
+        .summary-box ul {
+            margin: 1rem 0 0 1.5rem;
+        }
+
+        .summary-box li {
+            margin-bottom: 0.75rem;
+            opacity: 0.95;
+        }
+
+        /* Footer */
+        footer {
+            background: #1a202c;
+            color: #a0aec0;
+            padding: 2rem;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        footer a {
+            color: #63b3ed;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8rem;
+            }
+
+            .meta-info {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            main {
+                padding: 2rem 1rem;
+            }
+
+            h2 {
+                font-size: 1.3rem;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            header {
+                background: white;
+                color: black;
+                border-bottom: 2px solid black;
+            }
+
+            .course-badge {
+                border: 1px solid black;
+            }
+
+            .definition, .example, .key-point, .analogy {
+                border: 1px solid #ccc;
+                background: white;
+            }
+
+            .summary-box {
+                background: #f0f0f0;
+                color: black;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="course-badge">רענון דיסציפלינרי • למידת מכונה ולמידה עמוקה</div>
+            <h1>חדו״א רבת משתנים ללמידת מכונה</h1>
+            <p class="subtitle">נגזרות חלקיות, גרדיאנט, ו-Gradient Descent</p>
+            <div class="meta-info">
+                <div class="meta-item">
+                    <svg class="meta-icon" fill="currentColor" viewBox="0 0 20 20"><path d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"/></svg>
+                    מפגש 3 • דצמבר 2025
+                </div>
+                <div class="meta-item">
+                    <svg class="meta-icon" fill="currentColor" viewBox="0 0 20 20"><path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"/></svg>
+                    אוניברסיטת תל אביב • בית הספר לחינוך
+                </div>
+                <div class="meta-item">
+                    <svg class="meta-icon" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/></svg>
+                    ד״ר שי פרח
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="intro-box">
+            <h2>על מה מדובר?</h2>
+            <p>
+                במפגש זה למדנו את <strong>היסודות המתמטיים</strong> הנדרשים להבנת למידת מכונה: 
+                מושג הפונקציה ומשמעותו ב-ML, נגזרות חלקיות, גרדיאנט, והאלגוריתם המרכזי — 
+                <em>Gradient Descent</em>. הדגש הוא על <strong>הבנה קונספטואלית</strong> ולא על יכולת חישוב טכנית.
+            </p>
+        </div>
+
+        <!-- Section 1: Functions -->
+        <section>
+            <h2><span class="section-number">1</span>פונקציה — המושג המרכזי</h2>
+            
+            <div class="definition">
+                <div class="definition-title">הגדרה: פונקציה</div>
+                <p>
+                    פונקציה היא <strong>התאמה</strong> המשייכת לכל איבר בקבוצה אחת (התחום) 
+                    <strong>איבר יחיד</strong> בקבוצה שנייה (הטווח).
+                </p>
+            </div>
+
+            <p>
+                שימו לב: זו לא "נוסחה" או "גרף" — אלה רק דרכים לייצג פונקציה. 
+                המהות היא <strong>ההתאמה החד-משמעית</strong>: לכל קלט יש פלט אחד ויחיד.
+            </p>
+
+            <h3>למה זה חשוב ב-Machine Learning?</h3>
+            <p>
+                כל מה שאנחנו עושים ב-Supervised Learning (הסוג הנפוץ ביותר של ML) מתמצה בשאלה אחת:
+            </p>
+            
+            <div class="key-point">
+                <div class="key-point-title">הרעיון המרכזי</div>
+                <p>
+                    אנחנו מחפשים <strong>פונקציה</strong> שמתארת את הקשר בין הקלט (X) לפלט (Y).
+                    יש לנו דוגמאות רבות של זוגות (X, Y), ואנחנו רוצים למצוא את "הכלל" שמקשר ביניהם.
+                </p>
+            </div>
+
+            <div class="example">
+                <div class="example-title">דוגמה: זיהוי תמונות</div>
+                <p>
+                    <strong>X</strong> = וקטור של פיקסלים המייצג תמונה<br>
+                    <strong>Y</strong> = קטגוריה (חתול, כלב, מכונית...)<br>
+                    <strong>הפונקציה</strong> = הכלל ש"יודע" להתאים תמונה לקטגוריה הנכונה
+                </p>
+            </div>
+
+            <p>
+                אנחנו מניחים שקיימת <strong>"פונקציה אלוהית"</strong> שמתארת את הקשר האמיתי בין X ל-Y. 
+                המטרה שלנו היא <strong>לקרב אותה</strong> כמה שיותר — לא נמצא אותה בדיוק, 
+                אבל נמצא פונקציה שמתנהגת כמוה ברוב המקרים.
+            </p>
+        </section>
+
+        <!-- Section 2: Loss Function -->
+        <section>
+            <h2><span class="section-number">2</span>פונקציית ה-Loss — מדידת השגיאה</h2>
+
+            <p>
+                כדי ללמד מכונה, אנחנו צריכים דרך <strong>למדוד כמה היא טועה</strong>. 
+                לשם כך משתמשים ב-<em>Loss Function</em> (פונקציית הפסד/שגיאה).
+            </p>
+
+            <div class="definition">
+                <div class="definition-title">הגדרה: Loss Function</div>
+                <p>
+                    פונקציה שמקבלת שני קלטים — <strong>התחזית של המודל</strong> ו<strong>התשובה האמיתית</strong> 
+                    (Ground Truth) — ומחזירה <strong>מספר חיובי אחד</strong> המייצג את "המרחק" ביניהם.
+                </p>
+            </div>
+
+            <div class="math-box">
+                <div class="formula">Loss = f(ŷ, y)</div>
+                <div class="explanation">
+                    כש-ŷ היא התחזית ו-y היא התשובה האמיתית
+                </div>
+            </div>
+
+            <ul>
+                <li><strong>Loss = 0</strong> — המודל צדק לחלוטין (מצב אידיאלי, בפועל לא קורה)</li>
+                <li><strong>Loss גבוה</strong> — המודל טעה מאוד</li>
+                <li><strong>המטרה</strong> — לצמצם את ה-Loss כמה שאפשר</li>
+            </ul>
+
+            <div class="analogy">
+                <div class="analogy-title">אנלוגיה: הפרש</div>
+                <p>
+                    חשבו על ה-Loss כמו "הפרש" בין שני דברים. אם ההפרש הוא אפס — הם זהים. 
+                    ככל שההפרש גדול יותר — הם רחוקים יותר זה מזה.
+                </p>
+            </div>
+        </section>
+
+        <!-- Section 3: Partial Derivatives -->
+        <section>
+            <h2><span class="section-number">3</span>נגזרות חלקיות — כשיש יותר ממשתנה אחד</h2>
+
+            <p>
+                בתיכון למדנו לגזור פונקציות של משתנה אחד. ב-ML, הפונקציות שלנו תלויות 
+                <strong>במיליוני משתנים</strong> (כל המשקלים ברשת). איך גוזרים כזה דבר?
+            </p>
+
+            <div class="definition">
+                <div class="definition-title">הגדרה: נגזרת חלקית</div>
+                <p>
+                    נגזרת של פונקציה רבת משתנים <strong>לפי משתנה אחד</strong>, 
+                    כשכל שאר המשתנים נחשבים <strong>קבועים</strong>.
+                </p>
+            </div>
+
+            <div class="example">
+                <div class="example-title">דוגמה מחושבת</div>
+                <p>נתונה הפונקציה:</p>
+                <div class="math-box">
+                    <div class="formula">g(x, y) = 2x + y⁸</div>
+                </div>
+                <p><strong>נגזרת חלקית לפי x:</strong> מתייחסים ל-y כקבוע (נגזרתו = 0)</p>
+                <div class="math-box">
+                    <div class="formula">∂g/∂x = 2</div>
+                </div>
+                <p><strong>נגזרת חלקית לפי y:</strong> מתייחסים ל-x כקבוע (נגזרתו = 0)</p>
+                <div class="math-box">
+                    <div class="formula">∂g/∂y = 8y⁷</div>
+                </div>
+            </div>
+
+            <div class="key-point">
+                <div class="key-point-title">העיקרון</div>
+                <p>
+                    לא משנה אם יש 2 משתנים או 2 מיליון — כל פעם אנחנו 
+                    <strong>מקבעים את כולם חוץ מאחד</strong> וגוזרים לפיו.
+                </p>
+            </div>
+        </section>
+
+        <!-- Section 4: Gradient -->
+        <section>
+            <h2><span class="section-number">4</span>הגרדיאנט — וקטור הנגזרות</h2>
+
+            <div class="definition">
+                <div class="definition-title">הגדרה: גרדיאנט (∇)</div>
+                <p>
+                    <strong>וקטור</strong> שמכיל את כל הנגזרות החלקיות של הפונקציה, 
+                    אחת לכל משתנה.
+                </p>
+            </div>
+
+            <div class="math-box">
+                <div class="formula">∇g = (∂g/∂x, ∂g/∂y, ...)</div>
+                <div class="explanation">
+                    עבור הדוגמה שלנו: ∇g = (2, 8y⁷)
+                </div>
+            </div>
+
+            <h3>המשמעות הגיאומטרית — זה הדבר החשוב!</h3>
+            
+            <div class="key-point">
+                <div class="key-point-title">משמעות הגרדיאנט</div>
+                <p>
+                    הגרדיאנט הוא <strong>וקטור כיוון</strong> שמצביע לכיוון שבו 
+                    <strong>הפונקציה עולה הכי מהר</strong>.
+                </p>
+            </div>
+
+            <div class="analogy">
+                <div class="analogy-title">אנלוגיה: סאונה</div>
+                <p>
+                    דמיינו שאתם עומדים בסאונה. הטמפרטורה משתנה ממקום למקום, אבל אתם יכולים 
+                    ללכת רק על הרצפה. הגרדיאנט הוא כמו <strong>חץ על הרצפה</strong> שאומר לכם: 
+                    "אם תלכו בכיוון הזה — החום יעלה הכי מהר".
+                </p>
+            </div>
+
+            <p>
+                <strong>נקודה חשובה:</strong> הגרדיאנט הוא לא "על" המשטח — הוא וקטור "שטוח" 
+                שמונח על מישור ה-XY ומראה <strong>כיוון</strong>, לא גובה.
+            </p>
+        </section>
+
+        <!-- Section 5: Gradient Descent -->
+        <section>
+            <h2><span class="section-number">5</span>Gradient Descent — האלגוריתם המרכזי</h2>
+
+            <p>
+                עכשיו מגיע החלק המעניין: <strong>איך המכונה לומדת?</strong>
+            </p>
+
+            <p>
+                יש לנו פונקציית Loss שאנחנו רוצים <strong>למזער</strong>. 
+                הגרדיאנט מצביע לכיוון שבו היא <strong>עולה</strong> הכי מהר. 
+                אז מה עושים?
+            </p>
+
+            <div class="key-point">
+                <div class="key-point-title">הרעיון של Gradient Descent</div>
+                <p>
+                    הולכים <strong>בכיוון ההפוך לגרדיאנט</strong> — וכך יורדים בפונקציה!
+                </p>
+            </div>
+
+            <h3>האלגוריתם בפשטות</h3>
+            <ol>
+                <li>עמוד בנקודה כלשהי (ערכים התחלתיים למשקלים)</li>
+                <li>חשב את הגרדיאנט בנקודה הזו</li>
+                <li>עשה צעד קטן <strong>בכיוון ההפוך</strong> לגרדיאנט</li>
+                <li>חזור לשלב 2</li>
+            </ol>
+
+            <div class="analogy">
+                <div class="analogy-title">אנלוגיה: טיול בהר עם עיניים קשורות</div>
+                <p>
+                    דמיינו שאתם על הר ורוצים להגיע לעמק (המינימום). אבל — <strong>העיניים שלכם קשורות!</strong>
+                    אתם לא רואים את כל ההר. כל מה שאתם יכולים לעשות זה לשאול: 
+                    "אם אעשה צעד קטן לכאן — אני עולה או יורד?"
+                </p>
+                <p>
+                    זה בדיוק מה שהמודל עושה: הוא לא "רואה" את כל פונקציית ה-Loss, 
+                    רק יכול לשאול מה הגרדיאנט בנקודה הנוכחית, ולזוז בהתאם.
+                </p>
+            </div>
+        </section>
+
+        <!-- Section 6: Important Notes -->
+        <section>
+            <h2><span class="section-number">6</span>הערות חשובות</h2>
+
+            <h3>למה לא פשוט נגזרת = 0?</h3>
+            <p>
+                בתיכון למדנו למצוא מינימום על ידי פתרון המשוואה f'(x) = 0. 
+                אבל ב-ML יש לנו <strong>מיליוני משתנים</strong>. לא רק שאי אפשר לפתור משוואה כזו 
+                אנליטית — בפונקציות כל כך מורכבות, הסיכוי שכל הנגזרות יתאפסו בדיוק באותה נקודה 
+                הוא כמעט אפסי.
+            </p>
+            <p>
+                לכן משתמשים ב-Gradient Descent: גישה <strong>איטרטיבית</strong> 
+                שמתקרבת למינימום צעד אחר צעד.
+            </p>
+
+            <h3>מינימום מקומי vs. גלובלי</h3>
+            <p>
+                שאלה טובה ששואלים הרבה: "מה אם נתקענו במינימום מקומי?"
+            </p>
+            <p>
+                <strong>ספוילר:</strong> בפונקציות עם מיליארדי פרמטרים (כמו רשתות עמוקות מודרניות), 
+                הבעיה הזו פחות רלוונטית. המרחב כל כך עצום שתמיד יש "מינימום טוב" בסביבה. 
+                חשבו על זה כמו <strong>משטח ביציות</strong> — יש מלא שקעים, ומכל מקום אפשר למצוא אחד קרוב.
+            </p>
+
+            <h3>הבנה קונספטואלית vs. פרוצדורלית</h3>
+            <p>
+                <strong>מה שאתם צריכים:</strong> להבין מה זה גרדיאנט ולמה הוא חשוב.<br>
+                <strong>מה שאתם לא צריכים:</strong> לדעת לחשב גרדיאנט של פונקציה מורכבת ביד — 
+                יש מחשב שעושה את זה.
+            </p>
+        </section>
+
+        <!-- Summary -->
+        <div class="summary-box">
+            <h3>סיכום הנקודות המרכזיות</h3>
+            <ul>
+                <li><strong>פונקציה</strong> = התאמה בין קבוצות. ב-ML אנחנו מחפשים פונקציה שמקשרת X ל-Y.</li>
+                <li><strong>Loss Function</strong> = מדידת השגיאה. מספר חיובי שאנחנו רוצים למזער.</li>
+                <li><strong>נגזרת חלקית</strong> = גזירה לפי משתנה אחד, כשהשאר קבועים.</li>
+                <li><strong>גרדיאנט</strong> = וקטור הנגזרות החלקיות. מצביע לכיוון העלייה המהירה ביותר.</li>
+                <li><strong>Gradient Descent</strong> = ירידה בכיוון ההפוך לגרדיאנט. כך המכונה "לומדת".</li>
+            </ul>
+        </div>
+
+        <!-- Next Steps -->
+        <section>
+            <h2><span class="section-number">📚</span>מטלה: למידה עצמית</h2>
+            <p>
+                בשבוע הקרוב, למדו את הנושאים הללו לעומק דרך <strong>Khan Academy</strong> — 
+                קורס <code>Multivariable Calculus</code>. היחידות הרלוונטיות יוקצו לכם במערכת.
+            </p>
+            <p>
+                <strong>זמן משוער:</strong> כשעה וחצי<br>
+                <strong>הדגש:</strong> סרטונים קצרים עם ויזואליזציות. התמקדו בהבנה, לא בתרגול טכני.
+            </p>
+            <p>
+                <strong>טיפ:</strong> הסתכלו על החומר גם בעיניים של מורה — 
+                מה קורה לתלמיד כיתה י"א שלומד את זה?
+            </p>
+        </section>
+    </main>
+
+    <footer>
+        <p>
+            <strong>קורס: רענון דיסציפלינרי — למידת מכונה ולמידה עמוקה</strong><br>
+            החוג לחינוך מתמטי, מדעי וטכנולוגי • בית הספר לחינוך • אוניברסיטת תל אביב<br>
+            שנת הלימודים תשפ״ו (2025-2026)
+        </p>
+    </footer>
+</body>
+</html>
